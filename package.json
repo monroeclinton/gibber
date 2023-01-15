@@ -1,7 +1,7 @@
 {
     "name": "gibber",
     "version": "0.1.0",
-    "private": true,
+    "license": "BSD-2-Clause",
     "scripts": {
         "build": "next build",
         "dev": "next dev",
