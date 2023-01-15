@@ -110,7 +110,7 @@ const Home: NextPage = () => {
                         </div>
                         <div className="flex h-full shrink-0 items-center rounded-t-lg px-6">
                             <p className="font-semibold text-neutral-600">
-                                Likes
+                                Media
                             </p>
                         </div>
                     </div>
