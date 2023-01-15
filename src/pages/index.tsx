@@ -81,7 +81,9 @@ const Home: NextPage = () => {
                                 </p>
                             </div>
                         </div>
-                        <div className="mt-7">{person.data.summary}</div>
+                        <div className="mt-7">
+                            <p>{person.data.summary}</p>
+                        </div>
                         <div className="mt-3.5 flex">
                             <p>
                                 <span className="font-semibold">
