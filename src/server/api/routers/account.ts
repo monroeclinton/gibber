@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
-export const personRouter = createTRPCRouter({
+export const accountRouter = createTRPCRouter({
     getByUsername: publicProcedure
         .input(z.object({ username: z.string() }))
         .query(({ input }) => {
