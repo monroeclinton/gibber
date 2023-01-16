@@ -1,4 +1,5 @@
 import { type NextPage } from "next";
+import { UserIcon } from "@heroicons/react/24/solid";
 import className from "classnames";
 import Head from "next/head";
 import Image from "next/image";
@@ -71,6 +72,9 @@ const Home: NextPage = () => {
                                             width={100}
                                             height={100}
                                         />
+                                    )}
+                                    {!account.data.avatar && (
+                                        <UserIcon className="m-[25%] w-1/2 text-neutral-400" />
                                     )}
                                 </div>
                             </div>
