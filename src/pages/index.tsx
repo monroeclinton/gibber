@@ -1,5 +1,10 @@
 import { type NextPage } from "next";
 import { UserIcon } from "@heroicons/react/24/solid";
+import {
+    ArrowPathRoundedSquareIcon,
+    ChatBubbleLeftIcon,
+    HeartIcon,
+} from "@heroicons/react/24/outline";
 import className from "classnames";
 import Head from "next/head";
 import Image from "next/image";
@@ -10,6 +15,15 @@ const Home: NextPage = () => {
     const account = api.account.getByUsername.useQuery({
         username: "monroeprograms",
     });
+
+    const post = api.post.getByAccountId.useQuery(
+        {
+            accountId: account.data?.id as string,
+        },
+        {
+            enabled: account.isSuccess,
+        }
+    );
 
     return (
         <>
@@ -118,6 +132,82 @@ const Home: NextPage = () => {
                             </p>
                         </div>
                     </div>
+                    {post.data && (
+                        <div className="border-b-2 border-neutral-50 px-6 py-5">
+                            <div className="flex">
+                                <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
+                                    <Image
+                                        alt="Person's avatar"
+                                        src={post.data.account.avatar}
+                                        width={50}
+                                        height={50}
+                                    />
+                                </div>
+                                <div className="ml-3.5 flex flex-col justify-center">
+                                    <p>{post.data.account.name}</p>
+                                    <p className="text-sm">
+                                        {post.data.createdAt.toLocaleDateString()}
+                                    </p>
+                                </div>
+                            </div>
+                            {post.data.attachments && (
+                                <div className="mt-3.5 grid h-[250px] grid-cols-2 grid-rows-2 gap-2">
+                                    {post.data.attachments.map(
+                                        (attachment, i) => (
+                                            <div
+                                                className={className(
+                                                    "overflow-hidden rounded-lg shadow",
+                                                    {
+                                                        "row-span-2": i == 0,
+                                                    }
+                                                )}
+                                                key={attachment.id}
+                                            >
+                                                <Image
+                                                    className="h-full object-cover"
+                                                    alt={attachment.description}
+                                                    src={attachment.url}
+                                                    width={attachment.width}
+                                                    height={attachment.height}
+                                                />
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            )}
+                            {post.data.content && (
+                                <div className="mt-3.5">
+                                    <p>{post.data.content}</p>
+                                </div>
+                            )}
+                            <div className="mt-3.5 flex justify-between">
+                                <div className="flex items-center">
+                                    <ChatBubbleLeftIcon
+                                        className="mr-3"
+                                        width={20}
+                                        height={20}
+                                    />
+                                    <p>{post.data.repliesCount}</p>
+                                </div>
+                                <div className="flex items-center">
+                                    <ArrowPathRoundedSquareIcon
+                                        className="mr-3"
+                                        width={20}
+                                        height={20}
+                                    />
+                                    <p>{post.data.reblogsCount}</p>
+                                </div>
+                                <div className="flex items-center">
+                                    <HeartIcon
+                                        className="mr-3"
+                                        width={20}
+                                        height={20}
+                                    />
+                                    <p>{post.data.favoritesCount}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </>
