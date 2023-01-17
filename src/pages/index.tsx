@@ -1,11 +1,11 @@
-import { type NextPage } from "next";
-import { UserIcon } from "@heroicons/react/24/solid";
 import {
     ArrowPathRoundedSquareIcon,
     ChatBubbleLeftIcon,
     HeartIcon,
 } from "@heroicons/react/24/outline";
+import { UserIcon } from "@heroicons/react/24/solid";
 import className from "classnames";
+import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 

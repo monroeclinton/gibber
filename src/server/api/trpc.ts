@@ -16,8 +16,16 @@
  * processing a request
  *
  */
+/**
+ * 2. INITIALIZATION
+ *
+ * This is where the trpc api is initialized, connecting the context and
+ * transformer
+ */
+import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
+import superjson from "superjson";
 
 import { getServerAuthSession } from "../auth";
 import { prisma } from "../db";
@@ -57,15 +65,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
         session,
     });
 };
-
-/**
- * 2. INITIALIZATION
- *
- * This is where the trpc api is initialized, connecting the context and
- * transformer
- */
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
     transformer: superjson,
