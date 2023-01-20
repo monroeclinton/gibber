@@ -9,6 +9,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 
+import NavButton from "../components/buttons/NavButton";
 import { api } from "../utils/api";
 
 const Home: NextPage = () => {
@@ -66,6 +67,9 @@ const Home: NextPage = () => {
                                 height={205}
                             />
                         )}
+                        <div className="ml-6 mt-2.5">
+                            <NavButton />
+                        </div>
                     </div>
                     <div className="px-6 pt-2">
                         <div className="flex">
