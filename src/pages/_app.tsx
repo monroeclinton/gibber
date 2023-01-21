@@ -5,7 +5,7 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 
-import SideBar from "../components/SideBar";
+import SideBar from "../components/navs/SideBar";
 import { api } from "../utils/api";
 
 const MyApp: AppType<{ session: Session | null }> = ({
