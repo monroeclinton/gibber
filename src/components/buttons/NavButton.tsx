@@ -5,14 +5,14 @@ import { navOpenAtom } from "../../atoms";
 import Button from "./Button";
 
 const NavButton: React.FC = () => {
-    const [navOpen, setNavOpen] = useAtom(navOpenAtom);
+    const [, setNavOpen] = useAtom(navOpenAtom);
 
     return (
         <Button
             color="secondary"
             iconOnly
             transparent
-            onClick={() => setNavOpen(!navOpen)}
+            onClick={() => setNavOpen(true)}
         >
             <Bars3Icon width={20} height={20} />
         </Button>
