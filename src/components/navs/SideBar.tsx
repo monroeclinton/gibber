@@ -1,6 +1,16 @@
+import {
+    BellIcon,
+    Cog6ToothIcon,
+    HomeIcon,
+    MagnifyingGlassIcon,
+    UserIcon,
+} from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import { useAtom } from "jotai";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Transition } from "react-transition-group";
 import {
     ENTERED,
@@ -10,6 +20,7 @@ import {
 } from "react-transition-group/Transition";
 
 import { navOpenAtom } from "../../atoms";
+import Button from "../buttons/Button";
 import CloseButton from "../buttons/CloseButton";
 import TopBar from "./TopBar";
 
@@ -90,14 +101,38 @@ const Mask: React.FC<{ state: string }> = ({ state }) => {
 };
 
 const Content: React.FC<{ state: string }> = ({ state }) => {
+    const router = useRouter();
+    const { status: sessionStatus } = useSession();
     const [, setNavOpen] = useAtom(navOpenAtom);
 
-    const className = classNames(defaultClassName, "w-[75%] bg-white", {
-        "-translate-x-full skew-y-6": [ENTERING, EXITED].includes(state),
-        "translate-x-0": state === ENTERED,
-        "-z-10": state === EXITED,
-        "z-50": state !== EXITED,
-    });
+    const className = classNames(
+        defaultClassName,
+        "w-full max-w-[380px] bg-white",
+        {
+            "-translate-x-full skew-y-6": [ENTERING, EXITED].includes(state),
+            "translate-x-0": state === ENTERED,
+            "-z-10": state === EXITED,
+            "z-50": state !== EXITED,
+        }
+    );
+
+    const items = sidebarItems
+        .filter((item) => !item.auth || sessionStatus === "authenticated")
+        .map((item) => (
+            <Link
+                className={classNames(
+                    "flex items-center justify-end rounded bg-gradient-to-r py-2 hover:from-neutral-100",
+                    {
+                        "text-red-700": item.url === router.asPath,
+                    }
+                )}
+                href={item.url}
+                key={item.url + item.text}
+            >
+                <p className="mr-6 text-xl">{item.text}</p>
+                <item.icon width={30} height={30} />
+            </Link>
+        ));
 
     return (
         <div className={className}>
@@ -113,6 +148,64 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
                     onClick={() => setNavOpen(false)}
                 />
             </TopBar>
+            <div className="mt-12 flex flex-col justify-center px-8">
+                <AuthCard />
+                <div className="mt-16">
+                    <div className="absolute right-0 h-[45px] rounded border-r-2 border-red-700" />
+                    {items}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const AuthCard: React.FC = () => {
+    const { data: sessionData, status: sessionStatus } = useSession();
+
+    if (sessionStatus === "unauthenticated") {
+        return (
+            <div className="flex grow flex-col rounded border-2 border-neutral-100 px-6 py-5">
+                <p className="text-xl font-semibold">Welcome to Gibber!</p>
+                <div className="mt-3.5 flex gap-2">
+                    <Button className="w-1/2" onClick={() => void signIn()}>
+                        Sign In
+                    </Button>
+                    <Button
+                        color="primary-outline"
+                        className="w-1/2"
+                        onClick={() => void signIn()}
+                    >
+                        Register
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col items-end">
+            {sessionData?.user?.image && (
+                <Image
+                    className="rounded-full"
+                    alt="Your avatar"
+                    src={sessionData.user.image}
+                    width={75}
+                    height={75}
+                />
+            )}
+            {!sessionData?.user?.image && (
+                <div className="h-[75px] w-[75px] rounded-full bg-neutral-100">
+                    <UserIcon className="m-[25%] w-1/2 text-neutral-400" />
+                </div>
+            )}
+            <p className="mt-2 text-lg">{sessionData?.user?.name}</p>
+            <Button
+                color="primary-outline"
+                className="mt-3"
+                onClick={() => void signOut()}
+            >
+                Sign Out
+            </Button>
         </div>
     );
 };
