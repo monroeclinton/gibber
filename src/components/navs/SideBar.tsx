@@ -19,6 +19,48 @@ const defaultClassName = `
     duration-[${duration.toString()}ms] ease-[cubic-bezier(0.5, 0.25, 0, 1)] transition-all
 `;
 
+type HeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
+
+interface ISidebarItem {
+    url: string;
+    text: string;
+    icon: HeroIcon;
+    auth: boolean;
+}
+
+const sidebarItems: ISidebarItem[] = [
+    {
+        url: "/",
+        text: "Home",
+        icon: HomeIcon,
+        auth: false,
+    },
+    {
+        url: "/search",
+        text: "Search",
+        icon: MagnifyingGlassIcon,
+        auth: false,
+    },
+    {
+        url: "/notifications",
+        text: "Notifications",
+        icon: BellIcon,
+        auth: true,
+    },
+    {
+        url: "/profile",
+        text: "Profile",
+        icon: UserIcon,
+        auth: true,
+    },
+    {
+        url: "/settings",
+        text: "Settings",
+        icon: Cog6ToothIcon,
+        auth: true,
+    },
+];
+
 const SideBar: React.FC = () => {
     const [navOpen] = useAtom(navOpenAtom);
 
