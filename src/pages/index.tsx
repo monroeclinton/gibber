@@ -17,9 +17,9 @@ const Home: NextPage = () => {
         username: "monroeprograms",
     });
 
-    const post = api.post.getByAccountId.useQuery(
+    const posts = api.post.getByUserId.useQuery(
         {
-            accountId: account.data?.id as string,
+            userId: account.data?.id as string,
         },
         {
             enabled: account.isSuccess,
