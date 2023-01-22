@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useRef } from "react";
 import { Transition } from "react-transition-group";
 import {
     ENTERED,
@@ -74,9 +75,10 @@ const sidebarItems: ISidebarItem[] = [
 
 const SideBar: React.FC = () => {
     const [navOpen] = useAtom(navOpenAtom);
+    const nodeRef = useRef(null);
 
     return (
-        <Transition in={navOpen} timeout={duration}>
+        <Transition nodeRef={nodeRef} in={navOpen} timeout={duration}>
             {(state: string) => (
                 <>
                     <Mask state={state} />

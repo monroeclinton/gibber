@@ -14,10 +14,39 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Post {
+    id             String        @id @default(cuid())
+    userId         String
+    user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    attachments    Attachment[]
+    content        String
+    repliesCount   Int           @default(0)
+    reblogsCount   Int           @default(0)
+    favoritesCount Int           @default(0)
+    createdAt      DateTime      @default(now())
+    updatedAt      DateTime      @updatedAt
+}
+
+model Attachment {
+    id        String    @id @default(cuid())
+    postId    String
+    post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    fileId    String
+    file      File      @relation(fields: [fileId], references: [id])
+    createdAt DateTime  @default(now())
+}
+
+model File {
+    id          String    @id @default(cuid())
+    attachments Attachment[]
+    type        String
+    mime        String
+    hash        String
+    extension   String
+    size        BigInt
+    height      Int?
+    width       Int?
+    createdAt   DateTime  @default(now())
 }
 
 // Necessary for Next auth
@@ -55,6 +84,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    posts         Post[]
 }
 
 model VerificationToken {
