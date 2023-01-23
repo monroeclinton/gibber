@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+    node:
+        container_name: gibber-node
+        user: node
+        build:
+            context: ./
+            dockerfile: ./docker/node/Dockerfile
+        command: npm run dev
+        volumes:
+            - ./:/web
+        ports:
+            - 3000:3000
+        depends_on:
+            - garage
+    garage:
+        container_name: gibber-garage
+        image: dxflrs/garage:v0.8.1
+        restart: unless-stopped
+        network_mode: "host"
+        volumes:
+            - ./garage.toml:/etc/garage.toml
+            - garage-data:/var/lib/garage/meta:rw
+            - garage-meta:/var/lib/garage/data:rw
+
+volumes:
+    # Object storage
+    garage-data:
+    garage-meta:
