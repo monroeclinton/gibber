@@ -26,7 +26,7 @@ CREATE TABLE "File" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "type" TEXT NOT NULL,
     "mime" TEXT NOT NULL,
-    "hash" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "extension" TEXT NOT NULL,
     "size" BIGINT NOT NULL,
     "height" INTEGER,

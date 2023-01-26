@@ -41,7 +41,7 @@ model File {
     attachments Attachment[]
     type        String
     mime        String
-    hash        String
+    name        String
     extension   String
     size        BigInt
     height      Int?
