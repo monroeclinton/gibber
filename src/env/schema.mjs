@@ -21,6 +21,12 @@ export const serverSchema = z.object({
     ),
     GITHUB_ID: z.string(),
     GITHUB_SECRET: z.string(),
+    S3_CLIENT_ENDPOINT: z.string(),
+    S3_SERVER_ENDPOINT: z.string(),
+    S3_REGION: z.string(),
+    S3_BUCKET: z.string(),
+    S3_KEY_ID: z.string(),
+    S3_KEY_SECRET: z.string(),
 });
 
 /**
