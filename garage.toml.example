@@ -1,0 +1,17 @@
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+
+replication_mode = "none"
+
+rpc_bind_addr = "[::]:3901"
+rpc_secret = "<RPC secret>"
+
+bootstrap_peers = []
+
+[s3_api]
+s3_region = "gibber"
+api_bind_addr = "[::]:3900"
+
+[s3_web]
+bind_addr = "[::]:3902"
+root_domain = "localhost"

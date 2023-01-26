@@ -1,6 +1,15 @@
 version: "3"
 
 services:
+    nginx:
+        container_name: gibber-nginx
+        image: nginx:stable-alpine
+        ports:
+            - 3905:3905
+        volumes:
+            - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - garage
     node:
         container_name: gibber-node
         user: node
@@ -10,20 +19,21 @@ services:
         command: npm run dev
         volumes:
             - ./:/web
-        ports:
-            - 3000:3000
+        network_mode: host
         depends_on:
+            - nginx
             - garage
     garage:
         container_name: gibber-garage
         image: dxflrs/garage:v0.8.1
-        restart: unless-stopped
-        network_mode: "host"
+        ports:
+            - 3900:3900
+            - 3901:3901
+            - 3902:3902
         volumes:
             - ./garage.toml:/etc/garage.toml
-            - garage-data:/var/lib/garage/meta:rw
-            - garage-meta:/var/lib/garage/data:rw
-
+            - garage-meta:/var/lib/garage/meta:rw
+            - garage-data:/var/lib/garage/data:rw
 volumes:
     # Object storage
     garage-data:

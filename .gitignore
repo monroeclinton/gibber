@@ -35,6 +35,9 @@ yarn-error.log*
 .env
 .env*.local
 
+# garage config file
+garage.toml
+
 # vercel
 .vercel
 
