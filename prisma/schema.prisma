@@ -40,6 +40,7 @@ model File {
     id          String    @id @default(cuid())
     attachments Attachment[]
     type        String
+    url         String
     mime        String
     name        String
     extension   String

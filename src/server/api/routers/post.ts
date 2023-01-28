@@ -106,6 +106,7 @@ export const postRouter = createTRPCRouter({
                     const file = await tx.file.create({
                         data: {
                             type: "IMAGE",
+                            url: env.S3_WEB_ENDPOINT + "/" + name,
                             mime: fileType.mime,
                             extension: upload.ext,
                             name,

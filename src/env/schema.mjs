@@ -21,6 +21,7 @@ export const serverSchema = z.object({
     ),
     GITHUB_ID: z.string(),
     GITHUB_SECRET: z.string(),
+    S3_WEB_ENDPOINT: z.string(),
     S3_CLIENT_ENDPOINT: z.string(),
     S3_SERVER_ENDPOINT: z.string(),
     S3_REGION: z.string(),
