@@ -30,19 +30,26 @@ export const postRouter = createTRPCRouter({
         .query(({ ctx }) => {
             // TODO: Filter on account
             return ctx.prisma.post.findMany({
+                orderBy: [
+                    {
+                        createdAt: "desc",
+                    },
+                ],
                 include: postInclude,
             });
         }),
     create: protectedProcedure
         .input(
             z.object({
-                content: z.string().min(1),
-                files: z.array(
-                    z.object({
-                        key: z.string().min(1),
-                        ext: z.string().min(1),
-                    })
-                ),
+                content: z.string(),
+                files: z
+                    .array(
+                        z.object({
+                            key: z.string().min(1),
+                            ext: z.string().min(1),
+                        })
+                    )
+                    .max(4),
             })
         )
         .mutation(async ({ ctx, input }) => {
