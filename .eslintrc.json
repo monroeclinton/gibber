@@ -20,6 +20,7 @@
         "plugin:@typescript-eslint/recommended"
     ],
     "rules": {
+        "@next/next/no-img-element": "off",
         "@typescript-eslint/consistent-type-imports": "warn",
         "simple-import-sort/imports": "error",
         "simple-import-sort/exports": "error",
