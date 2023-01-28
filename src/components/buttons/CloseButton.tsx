@@ -1,10 +1,9 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
+import type { IButtonProps } from "./Button";
 import Button from "./Button";
 
-type ICloseButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
-
-const CloseButton: React.FC<ICloseButtonProps> = (props) => {
+const CloseButton: React.FC<IButtonProps> = (props) => {
     return (
         <Button {...props} color="secondary" iconOnly>
             <XMarkIcon width={20} height={20} />

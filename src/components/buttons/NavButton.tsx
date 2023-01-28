@@ -2,13 +2,15 @@ import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useAtom } from "jotai";
 
 import { navOpenAtom } from "../../atoms";
+import type { IButtonProps } from "./Button";
 import Button from "./Button";
 
-const NavButton: React.FC = () => {
+const NavButton: React.FC<IButtonProps> = (props) => {
     const [, setNavOpen] = useAtom(navOpenAtom);
 
     return (
         <Button
+            {...props}
             color="secondary"
             iconOnly
             transparent

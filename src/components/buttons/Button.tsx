@@ -2,7 +2,8 @@ import classNames from "classnames";
 
 export type Type = "primary" | "primary-outline" | "secondary";
 
-interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IButtonProps
+    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children?: React.ReactNode;
     iconOnly?: boolean;
     color?: Type;
