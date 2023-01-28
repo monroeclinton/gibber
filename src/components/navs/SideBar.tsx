@@ -25,10 +25,12 @@ import Button from "../buttons/Button";
 import CloseButton from "../buttons/CloseButton";
 import TopBar from "./TopBar";
 
-const duration = 150;
+// Make sure you change the tailwind duration too,
+// literal values are not allowed.
+const duration = 125;
 const defaultClassName = `
     absolute top-0 bottom-0 left-0 right-0
-    duration-[${duration.toString()}ms] ease-[cubic-bezier(0.5, 0.25, 0, 1)] transition-all
+    duration-[125ms] ease-[cubic-bezier(0.5, 0.25, 0, 1)] transition-all
 `;
 
 type HeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
@@ -79,12 +81,14 @@ const SideBar: React.FC = () => {
 
     return (
         <Transition nodeRef={nodeRef} in={navOpen} timeout={duration}>
-            {(state: string) => (
-                <>
-                    <Mask state={state} />
-                    <Content state={state} />
-                </>
-            )}
+            {(state: string) =>
+                state !== EXITED && (
+                    <div ref={nodeRef}>
+                        <Mask state={state} />
+                        <Content state={state} />
+                    </div>
+                )
+            }
         </Transition>
     );
 };
@@ -93,10 +97,8 @@ const Mask: React.FC<{ state: string }> = ({ state }) => {
     const [, setNavOpen] = useAtom(navOpenAtom);
 
     const className = classNames(defaultClassName, "bg-black", {
-        "opacity-0": [ENTERING, EXITED].includes(state),
-        "opacity-40": [ENTERED, EXITING].includes(state),
-        "-z-10": state === EXITED,
-        "z-50": state !== EXITED,
+        "opacity-0": [ENTERING, EXITING].includes(state),
+        "opacity-40": ENTERED === state,
     });
 
     return <div className={className} onClick={() => setNavOpen(false)} />;
@@ -111,10 +113,8 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
         defaultClassName,
         "w-full max-w-[380px] bg-white",
         {
-            "-translate-x-full skew-y-6": [ENTERING, EXITED].includes(state),
+            "-translate-x-full skew-y-6": [ENTERING, EXITING].includes(state),
             "translate-x-0": state === ENTERED,
-            "-z-10": state === EXITED,
-            "z-50": state !== EXITED,
         }
     );
 
