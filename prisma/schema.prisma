@@ -44,7 +44,7 @@ model File {
     mime        String
     name        String
     extension   String
-    size        BigInt
+    size        Int
     height      Int?
     width       Int?
     createdAt   DateTime  @default(now())
