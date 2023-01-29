@@ -5,7 +5,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 
-import NavButton from "../components/buttons/NavButton";
+import NavButton from "../components/button/NavButton";
 import Post from "../components/post";
 import CreatePost from "../components/post/create";
 import { api } from "../utils/api";

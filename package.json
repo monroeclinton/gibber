@@ -38,6 +38,7 @@
         "zod": "^3.20.2"
     },
     "devDependencies": {
+        "@svgr/webpack": "^6.5.1",
         "@tailwindcss/aspect-ratio": "^0.4.2",
         "@types/node": "^18.11.18",
         "@types/prettier": "^2.7.2",
