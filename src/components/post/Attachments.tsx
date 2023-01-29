@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import classNames from "classnames";
 
-import CloseButton from "../buttons/CloseButton";
+import CloseButton from "../button/CloseButton";
 
 export type AttachmentType = Prisma.AttachmentGetPayload<{
     include: {

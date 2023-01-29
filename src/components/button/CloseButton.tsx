@@ -1,7 +1,7 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-import type { IButtonProps } from "./Button";
-import Button from "./Button";
+import type { IButtonProps } from "./index";
+import Button from "./index";
 
 const CloseButton: React.FC<IButtonProps> = (props) => {
     return (

@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { api } from "../../../utils/api";
-import Button from "../../buttons/Button";
+import Button from "../../button";
 import type { AttachmentType } from "../Attachments";
 import Attachments from "../Attachments";
 

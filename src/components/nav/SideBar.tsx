@@ -20,9 +20,10 @@ import {
     EXITING,
 } from "react-transition-group/Transition";
 
+import Logo from "../../../assets/gibber.svg";
 import { navOpenAtom } from "../../atoms";
-import Button from "../buttons/Button";
-import CloseButton from "../buttons/CloseButton";
+import Button from "../button";
+import CloseButton from "../button/CloseButton";
 import TopBar from "./TopBar";
 
 // Make sure you change the tailwind duration too,
@@ -139,12 +140,7 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
     return (
         <div className={className}>
             <TopBar>
-                <Image
-                    alt="Gibber Logo"
-                    src="/gibber.svg"
-                    width={40}
-                    height={40}
-                />
+                <Logo width={40} height={40} />
                 <CloseButton
                     className="ml-auto"
                     onClick={() => setNavOpen(false)}
