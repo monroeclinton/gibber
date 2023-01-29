@@ -132,20 +132,28 @@ export const postRouter = createTRPCRouter({
                 });
             });
         }),
-    createPresignedUrl: protectedProcedure.query(async () => {
-        const key = uuidv4();
+    createPresignedUrls: protectedProcedure
+        .input(z.object({ count: z.number().gte(1).lte(4) }))
+        .query(async ({ input }) => {
+            const urls = [];
 
-        const url = await getSignedUrl(
-            s3Client,
-            new PutObjectCommand({
-                Bucket: env.S3_BUCKET,
-                Key: key,
-            })
-        );
+            for (let i = 0; i < input.count; i++) {
+                const key = uuidv4();
 
-        return {
-            url,
-            key,
-        };
-    }),
+                const url = await getSignedUrl(
+                    s3Client,
+                    new PutObjectCommand({
+                        Bucket: env.S3_BUCKET,
+                        Key: key,
+                    })
+                );
+
+                urls.push({
+                    url,
+                    key,
+                });
+            }
+
+            return urls;
+        }),
 });
