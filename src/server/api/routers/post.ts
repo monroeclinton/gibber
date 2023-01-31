@@ -16,7 +16,11 @@ import { s3Client, s3Server } from "../../s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 const postInclude = {
-    user: true,
+    profile: {
+        include: {
+            avatar: true,
+        },
+    },
     attachments: {
         include: {
             file: true,
@@ -41,6 +45,7 @@ export const postRouter = createTRPCRouter({
     create: protectedProcedure
         .input(
             z.object({
+                profileId: z.string(),
                 content: z.string(),
                 files: z
                     .array(
@@ -57,9 +62,25 @@ export const postRouter = createTRPCRouter({
                 const session = ctx.session;
                 const files = input.files;
 
+                const hasPermission = await ctx.prisma.profile
+                    .findFirst({
+                        where: {
+                            id: input.profileId,
+                            userId: session.user.id,
+                        },
+                    })
+                    .then((r) => Boolean(r));
+
+                if (!hasPermission) {
+                    throw new TRPCError({
+                        code: "FORBIDDEN",
+                        message: "You do not have access to this profile.",
+                    });
+                }
+
                 const post = await tx.post.create({
                     data: {
-                        userId: session.user.id,
+                        profileId: input.profileId,
                         content: input.content,
                     },
                 });

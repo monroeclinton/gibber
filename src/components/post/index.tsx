@@ -2,15 +2,21 @@ import {
     ArrowPathRoundedSquareIcon,
     ChatBubbleLeftIcon,
     HeartIcon,
+    UserIcon,
 } from "@heroicons/react/24/outline";
 import type { Prisma } from "@prisma/client";
+import classNames from "classnames";
 import Image from "next/image";
 
 import Attachments from "./Attachments";
 
 type IPost = Prisma.PostGetPayload<{
     include: {
-        user: true;
+        profile: {
+            include: {
+                avatar: true;
+            };
+        };
         attachments: {
             include: {
                 file: true;
@@ -23,18 +29,28 @@ const Post: React.FC<{ post: IPost }> = ({ post }) => {
     return (
         <div className="border-b-2 border-neutral-50 px-6 py-5">
             <div className="flex">
-                <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
-                    {post.user.image && (
+                <div
+                    className={classNames(
+                        "h-[50px] w-[50px] overflow-hidden rounded-full",
+                        {
+                            "bg-neutral-100": !post.profile.avatar,
+                        }
+                    )}
+                >
+                    {!post.profile.avatar && (
+                        <UserIcon className="m-[25%] w-1/2 text-neutral-400" />
+                    )}
+                    {post.profile.avatar && (
                         <Image
                             alt="Person's avatar"
-                            src={post.user.image}
+                            src={post.profile.avatar.url}
                             width={50}
                             height={50}
                         />
                     )}
                 </div>
                 <div className="ml-3.5 flex flex-col justify-center">
-                    <p>{post.user.name}</p>
+                    <p>{post.profile.username}</p>
                     <p className="text-sm">
                         {post.createdAt.toLocaleDateString()}
                     </p>

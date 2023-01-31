@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { api } from "../../../utils/api";
+import { useProfile } from "../../../utils/use-profile";
 import Button from "../../button";
 import type { AttachmentType } from "../Attachments";
 import Attachments from "../Attachments";
@@ -12,6 +13,7 @@ type FileAndAttachment = { file: File; attachment: AttachmentType };
 
 const CreatePost: React.FC = () => {
     const { data: sessionData } = useSession();
+    const profile = useProfile();
 
     const utils = api.useContext();
 
@@ -36,9 +38,9 @@ const CreatePost: React.FC = () => {
             setContent("");
             setPreviewAttachments([]);
 
-            if (sessionData?.user?.id) {
+            if (profile.data?.id) {
                 utils.post.getByUserId.setData(
-                    { userId: sessionData.user.id },
+                    { userId: "example-id" },
                     (prevData) => {
                         if (prevData) {
                             return [data, ...prevData];
@@ -120,11 +122,19 @@ const CreatePost: React.FC = () => {
             }
         }
 
-        post.mutate({ content, files: uploads });
+        if (profile.data) {
+            post.mutate({
+                profileId: profile.data.id,
+                content,
+                files: uploads,
+            });
+        }
     };
 
     const isDisabled =
         (!content.length && !previewAttachments.length) ||
+        !profile.data ||
+        profile.isFetching ||
         presignedUrls.isFetching;
 
     return (
