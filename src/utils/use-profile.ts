@@ -29,16 +29,18 @@ export const useProfile = () => {
 
     const profile = api.profile.getById.useQuery(
         {
-            id: id ? id : "",
+            id: id as string,
         },
         {
             enabled: !!id,
+            notifyOnChangeProps: "all",
         }
     );
 
     useEffect(() => {
         const setProfile = () => {
             const profileId = getProfileId();
+
             if (profileId) {
                 void profile.refetch();
             }
