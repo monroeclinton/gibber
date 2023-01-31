@@ -16,8 +16,8 @@ datasource db {
 
 model Post {
     id             String        @id @default(cuid())
-    userId         String
-    user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    profileId      String
+    profile        Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
     attachments    Attachment[]
     content        String?
     repliesCount   Int           @default(0)
@@ -39,6 +39,7 @@ model Attachment {
 model File {
     id          String    @id @default(cuid())
     attachments Attachment[]
+    profiles    Profile[]
     type        String
     url         String
     mime        String
@@ -48,6 +49,21 @@ model File {
     height      Int?
     width       Int?
     createdAt   DateTime  @default(now())
+}
+
+model Profile {
+    id                String    @id @default(cuid())
+    posts             Post[]
+    userId            String
+    user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    avatarId          String?
+    avatar            File?     @relation(fields: [avatarId], references: [id], onDelete: Cascade)
+    username          String    @unique
+    summary           String
+    followingCount    Int       @default(0)
+    followersCount    Int       @default(0)
+    createdAt         DateTime  @default(now())
+    updatedAt         DateTime  @updatedAt
 }
 
 // Necessary for Next auth
@@ -85,7 +101,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    posts         Post[]
+    profiles      Profile[]
 }
 
 model VerificationToken {

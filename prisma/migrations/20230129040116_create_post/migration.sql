@@ -1,14 +1,14 @@
 -- CreateTable
 CREATE TABLE "Post" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "userId" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
+    "profileId" TEXT NOT NULL,
+    "content" TEXT,
     "repliesCount" INTEGER NOT NULL DEFAULT 0,
     "reblogsCount" INTEGER NOT NULL DEFAULT 0,
     "favoritesCount" INTEGER NOT NULL DEFAULT 0,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "Post_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -25,11 +25,30 @@ CREATE TABLE "Attachment" (
 CREATE TABLE "File" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "type" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
     "mime" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "extension" TEXT NOT NULL,
-    "size" BIGINT NOT NULL,
+    "size" INTEGER NOT NULL,
     "height" INTEGER,
     "width" INTEGER,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- CreateTable
+CREATE TABLE "Profile" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "userId" TEXT NOT NULL,
+    "avatarId" TEXT,
+    "username" TEXT NOT NULL,
+    "summary" TEXT NOT NULL,
+    "followingCount" INTEGER NOT NULL DEFAULT 0,
+    "followersCount" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "Profile_avatarId_fkey" FOREIGN KEY ("avatarId") REFERENCES "File" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Profile_username_key" ON "Profile"("username");
