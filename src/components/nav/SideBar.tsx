@@ -22,6 +22,7 @@ import {
 
 import Logo from "../../../assets/gibber.svg";
 import { navOpenAtom } from "../../atoms";
+import { clearProfileId, useProfile } from "../../utils/use-profile";
 import Button from "../button";
 import CloseButton from "../button/CloseButton";
 import TopBar from "./TopBar";
@@ -158,7 +159,9 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
 };
 
 const AuthCard: React.FC = () => {
-    const { data: sessionData, status: sessionStatus } = useSession();
+    const { status: sessionStatus } = useSession();
+
+    const profile = useProfile();
 
     if (sessionStatus === "unauthenticated") {
         return (
@@ -182,28 +185,33 @@ const AuthCard: React.FC = () => {
 
     return (
         <div className="flex flex-col items-end">
-            {sessionData?.user?.image && (
+            {profile.data?.avatar && (
                 <Image
                     className="rounded-full"
                     alt="Your avatar"
-                    src={sessionData.user.image}
+                    src={profile.data.avatar.url}
                     width={75}
                     height={75}
                 />
             )}
-            {!sessionData?.user?.image && (
+            {!profile.data?.avatar && (
                 <div className="h-[75px] w-[75px] rounded-full bg-neutral-100">
                     <UserIcon className="m-[25%] w-1/2 text-neutral-400" />
                 </div>
             )}
-            <p className="mt-2 text-lg">{sessionData?.user?.name}</p>
-            <Button
-                color="primary-outline"
-                className="mt-3"
-                onClick={() => void signOut()}
-            >
-                Sign Out
-            </Button>
+            <p className="mt-2 text-lg">{profile.data?.username}</p>
+            <div className="mt-3">
+                <Button
+                    color="secondary"
+                    onClick={() => clearProfileId()}
+                    className="mr-3.5"
+                >
+                    Switch Profile
+                </Button>
+                <Button color="primary-outline" onClick={() => void signOut()}>
+                    Sign Out
+                </Button>
+            </div>
         </div>
     );
 };
