@@ -12,7 +12,9 @@ const ProfileManager: React.FC = () => {
 
     const profiles = api.profile.getAll.useQuery();
 
-    const [profile, setProfile] = useState<string | null>(profileId);
+    const [profile, setProfile] = useState<string | undefined>(
+        profileId ? profileId : undefined
+    );
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const changeProfile = () => {
@@ -41,7 +43,7 @@ const ProfileManager: React.FC = () => {
     }, [profile, profiles.data]);
 
     useEffect(() => {
-        if (sessionStatus === "authenticated" && profileId === null) {
+        if (sessionStatus === "authenticated" && profileId === undefined) {
             setIsOpen(true);
         }
     }, [sessionStatus, profileId]);
@@ -56,7 +58,7 @@ const ProfileManager: React.FC = () => {
                         </label>
                         <select
                             className="grow rounded p-3"
-                            value={profile ? profile : undefined}
+                            value={profile}
                             onChange={(e) => setProfile(e.target.value)}
                         >
                             {profiles.data.map((profile) => (
