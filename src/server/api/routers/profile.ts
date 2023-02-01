@@ -39,7 +39,11 @@ export const profileRouter = createTRPCRouter({
     create: protectedProcedure
         .input(
             z.object({
-                username: z.string().regex(new RegExp("^[a-zA-Z0-9_]*$")),
+                name: z.string().min(1),
+                username: z
+                    .string()
+                    .regex(new RegExp("^[a-zA-Z0-9_]*$"))
+                    .min(1),
                 summary: z.string(),
             })
         )
@@ -49,6 +53,7 @@ export const profileRouter = createTRPCRouter({
             return ctx.prisma.profile.create({
                 data: {
                     userId: session.user.id,
+                    name: input.name,
                     username: input.username,
                     summary: input.summary,
                 },

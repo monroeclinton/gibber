@@ -102,6 +102,7 @@ const SelectProfile: React.FC = () => {
 const CreateProfile: React.FC = () => {
     const utils = api.useContext();
 
+    const [name, setName] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [summary, setSummary] = useState<string>("");
 
@@ -122,7 +123,7 @@ const CreateProfile: React.FC = () => {
     });
 
     const createProfile = () => {
-        profile.mutate({ username, summary });
+        profile.mutate({ name, username, summary });
     };
 
     return (
@@ -132,6 +133,15 @@ const CreateProfile: React.FC = () => {
                     {profile.error.message}
                 </div>
             )}
+            <div className="mt-6 flex">
+                <input
+                    className="grow rounded-lg border-2 border-none bg-neutral-100 p-3.5 placeholder:text-neutral-600 focus:outline-none"
+                    type="text"
+                    placeholder="Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+            </div>
             <div className="mt-6 flex">
                 <input
                     className="grow rounded-lg border-2 border-none bg-neutral-100 p-3.5 placeholder:text-neutral-600 focus:outline-none"

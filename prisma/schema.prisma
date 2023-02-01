@@ -58,6 +58,7 @@ model Profile {
     user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
     avatarId          String?
     avatar            File?     @relation(fields: [avatarId], references: [id], onDelete: Cascade)
+    name              String
     username          String    @unique
     summary           String
     followingCount    Int       @default(0)
