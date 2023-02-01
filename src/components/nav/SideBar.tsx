@@ -218,7 +218,13 @@ const AuthCard: React.FC = () => {
                 >
                     Switch Profile
                 </Button>
-                <Button color="primary-outline" onClick={() => void signOut()}>
+                <Button
+                    color="primary-outline"
+                    onClick={() => {
+                        clearProfileId();
+                        void signOut();
+                    }}
+                >
                     Sign Out
                 </Button>
             </div>
