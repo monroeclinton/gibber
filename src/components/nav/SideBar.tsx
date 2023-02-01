@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Transition } from "react-transition-group";
 import {
     ENTERED,
@@ -78,8 +78,18 @@ const sidebarItems: ISidebarItem[] = [
 ];
 
 const SideBar: React.FC = () => {
-    const [navOpen] = useAtom(navOpenAtom);
+    const router = useRouter();
+
+    const [navOpen, setNavOpen] = useAtom(navOpenAtom);
     const nodeRef = useRef(null);
+
+    useEffect(() => {
+        const onChange = () => setNavOpen(false);
+
+        router.events.on("routeChangeStart", onChange);
+
+        return () => router.events.off("routeChangeStart", onChange);
+    }, [router.events, setNavOpen]);
 
     return (
         <Transition nodeRef={nodeRef} in={navOpen} timeout={duration}>
