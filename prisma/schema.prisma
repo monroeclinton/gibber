@@ -60,7 +60,7 @@ model Profile {
     avatar            File?     @relation(fields: [avatarId], references: [id], onDelete: Cascade)
     name              String
     username          String    @unique
-    summary           String
+    summary           String?
     followingCount    Int       @default(0)
     followersCount    Int       @default(0)
     createdAt         DateTime  @default(now())
