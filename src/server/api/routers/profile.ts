@@ -1,6 +1,7 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 const profileInclude = {
     avatar: true,
@@ -22,19 +23,51 @@ export const profileRouter = createTRPCRouter({
             include: profileInclude,
         });
     }),
+    getByUsername: publicProcedure
+        .input(
+            z.object({
+                username: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const profile = await ctx.prisma.profile.findFirst({
+                where: {
+                    username: input.username,
+                },
+                include: profileInclude,
+            });
+
+            if (!profile) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Profile not found.",
+                });
+            }
+
+            return profile;
+        }),
     getById: protectedProcedure
         .input(
             z.object({
                 id: z.string(),
             })
         )
-        .query(({ ctx, input }) => {
-            return ctx.prisma.profile.findFirstOrThrow({
+        .query(async ({ ctx, input }) => {
+            const profile = await ctx.prisma.profile.findFirstOrThrow({
                 where: {
                     id: input.id,
                 },
                 include: profileInclude,
             });
+
+            if (!profile) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Profile not found.",
+                });
+            }
+
+            return profile;
         }),
     create: protectedProcedure
         .input(
