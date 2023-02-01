@@ -29,11 +29,14 @@ const postInclude = {
 };
 
 export const postRouter = createTRPCRouter({
-    getByUserId: publicProcedure
-        .input(z.object({ userId: z.string() }))
-        .query(({ ctx }) => {
+    getByProfileId: publicProcedure
+        .input(z.object({ profileId: z.string() }))
+        .query(({ ctx, input }) => {
             // TODO: Filter on account
             return ctx.prisma.post.findMany({
+                where: {
+                    profileId: input.profileId,
+                },
                 orderBy: [
                     {
                         createdAt: "desc",
