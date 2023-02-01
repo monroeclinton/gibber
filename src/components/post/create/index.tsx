@@ -1,5 +1,4 @@
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import { useSession } from "next-auth/react";
 import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -12,7 +11,6 @@ import Attachments from "../Attachments";
 type FileAndAttachment = { file: File; attachment: AttachmentType };
 
 const CreatePost: React.FC = () => {
-    const { data: sessionData } = useSession();
     const profile = useProfile();
 
     const utils = api.useContext();
@@ -39,8 +37,8 @@ const CreatePost: React.FC = () => {
             setPreviewAttachments([]);
 
             if (profile.data?.id) {
-                utils.post.getByUserId.setData(
-                    { userId: "example-id" },
+                utils.post.getByProfileId.setData(
+                    { profileId: profile.data.id },
                     (prevData) => {
                         if (prevData) {
                             return [data, ...prevData];
