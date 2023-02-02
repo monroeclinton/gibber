@@ -1,21 +1,29 @@
 import { UserIcon } from "@heroicons/react/24/solid";
 import className from "classnames";
+import { useAtom } from "jotai";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
+import { profileManagerAtom } from "../atoms";
+import Button from "../components/button";
 import NavButton from "../components/button/NavButton";
 import Post from "../components/post";
 import CreatePost from "../components/post/create";
 import { api } from "../utils/api";
+import { getProfileId } from "../utils/use-profile";
 
 const Profile: NextPage = () => {
     const router = useRouter();
     const { username } = router.query;
 
+    const profileId = getProfileId();
+
     const { status: sessionStatus } = useSession();
+
+    const [, setProfileManager] = useAtom(profileManagerAtom);
 
     const profile = api.profile.getByUsername.useQuery(
         {
@@ -125,6 +133,17 @@ const Profile: NextPage = () => {
                                 </p>
                             </div>
                         </div>
+                        {profile.data.id === profileId && (
+                            <div className="flex">
+                                <Button
+                                    color="secondary"
+                                    className="grow"
+                                    onClick={() => setProfileManager("edit")}
+                                >
+                                    Edit Profile
+                                </Button>
+                            </div>
+                        )}
                         {profile.data.summary && (
                             <div className="mt-7">
                                 <p>{profile.data.summary}</p>
