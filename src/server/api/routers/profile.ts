@@ -53,7 +53,7 @@ export const profileRouter = createTRPCRouter({
             })
         )
         .query(async ({ ctx, input }) => {
-            const profile = await ctx.prisma.profile.findFirstOrThrow({
+            const profile = await ctx.prisma.profile.findFirst({
                 where: {
                     id: input.id,
                 },
