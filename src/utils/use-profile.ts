@@ -33,7 +33,7 @@ export const useProfile = () => {
         },
         {
             enabled: !!id,
-            notifyOnChangeProps: "all",
+            notifyOnChangeProps: ["data"],
         }
     );
 
