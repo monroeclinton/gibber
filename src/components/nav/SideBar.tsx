@@ -5,6 +5,7 @@ import {
     MagnifyingGlassIcon,
     UserIcon,
 } from "@heroicons/react/24/outline";
+import { UserIcon as SolidUserIcon } from "@heroicons/react/24/solid";
 import classNames from "classnames";
 import { useAtom } from "jotai";
 import Image from "next/image";
@@ -206,7 +207,7 @@ const AuthCard: React.FC = () => {
             )}
             {!profile.data?.avatar && (
                 <div className="h-[75px] w-[75px] rounded-full bg-neutral-100">
-                    <UserIcon className="m-[25%] w-1/2 text-neutral-400" />
+                    <SolidUserIcon className="m-[25%] w-1/2 text-neutral-400" />
                 </div>
             )}
             <p className="mt-2 text-lg">{profile.data?.username}</p>
