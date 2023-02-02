@@ -96,7 +96,7 @@ const CreatePost: React.FC = () => {
         }
     };
 
-    const createPost = async () => {
+    const onSubmit = async () => {
         const uploads: { key: string; ext: string }[] = [];
 
         if (previewAttachments.length && presignedUrls.data) {
@@ -172,7 +172,7 @@ const CreatePost: React.FC = () => {
                 <Button
                     disabled={isDisabled}
                     className="ml-auto"
-                    onClick={() => void createPost()}
+                    onClick={() => void onSubmit()}
                 >
                     Post
                 </Button>
