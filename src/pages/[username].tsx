@@ -102,7 +102,7 @@ const Profile: NextPage = () => {
                         <NavButton />
                     </div>
                     <div className="px-6 pt-2">
-                        <div className="flex">
+                        <div className="mb-7 flex">
                             <div className="relative shrink-0 basis-[100px]">
                                 <div
                                     className={className(
@@ -145,7 +145,7 @@ const Profile: NextPage = () => {
                             </div>
                         )}
                         {profile.data.summary && (
-                            <div className="mt-7">
+                            <div className="mt-4">
                                 <p>{profile.data.summary}</p>
                             </div>
                         )}
