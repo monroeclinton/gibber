@@ -11,7 +11,7 @@ import Attachments from "../Attachments";
 type FileAndAttachment = { file: File; attachment: AttachmentType };
 
 const CreatePost: React.FC = () => {
-    const profile = useProfile();
+    const { profile } = useProfile();
 
     const utils = api.useContext();
 

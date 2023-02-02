@@ -4,30 +4,26 @@ import { useEffect, useState } from "react";
 
 import { profileManagerAtom } from "../../atoms";
 import { api } from "../../utils/api";
-import { getProfileId, setProfileId } from "../../utils/use-profile";
+import {
+    getProfileId,
+    setProfileId,
+    useProfile,
+} from "../../utils/use-profile";
 import Button from "../button";
 import Modal from "../modal";
 
 const ProfileManager: React.FC = () => {
     const { status: sessionStatus } = useSession();
-    const profileId = getProfileId();
+    const { id: profileId } = useProfile();
 
     const [profileManager, setProfileManager] = useAtom(profileManagerAtom);
 
     useEffect(() => {
-        const onStorage = () => {
-            setProfileManager(getProfileId() === null ? "select" : null);
-        };
-
-        window.addEventListener("storage", onStorage);
-
-        return () => window.removeEventListener("storage", onStorage);
-    }, [setProfileManager]);
-
-    useEffect(() => {
-        if (sessionStatus === "authenticated" && profileId === null) {
-            setProfileManager("select");
-        }
+        setProfileManager(
+            sessionStatus === "authenticated" && profileId === null
+                ? "select"
+                : null
+        );
     }, [sessionStatus, profileId, setProfileManager]);
 
     return (

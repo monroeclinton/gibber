@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { api } from "./api";
 
@@ -25,7 +25,7 @@ export const getProfileId = () => {
 };
 
 export const useProfile = () => {
-    const id = getProfileId();
+    const [id, setId] = useState<string | null>(getProfileId());
 
     const profile = api.profile.getById.useQuery(
         {
@@ -41,9 +41,7 @@ export const useProfile = () => {
         const setProfile = () => {
             const profileId = getProfileId();
 
-            if (profileId) {
-                void profile.refetch();
-            }
+            setId(profileId);
         };
 
         window.addEventListener("storage", setProfile);
@@ -51,5 +49,5 @@ export const useProfile = () => {
         return () => window.addEventListener("storage", setProfile);
     }, [profile]);
 
-    return profile;
+    return { id, profile };
 };

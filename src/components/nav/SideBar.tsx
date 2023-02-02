@@ -172,7 +172,7 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
 const AuthCard: React.FC = () => {
     const { status: sessionStatus } = useSession();
 
-    const profile = useProfile();
+    const { profile } = useProfile();
 
     if (sessionStatus === "unauthenticated") {
         return (
