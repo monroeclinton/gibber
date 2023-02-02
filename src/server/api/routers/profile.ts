@@ -69,7 +69,7 @@ export const profileRouter = createTRPCRouter({
 
             return profile;
         }),
-    create: protectedProcedure
+    upsert: protectedProcedure
         .input(
             z.object({
                 name: z.string().min(1),
@@ -80,16 +80,38 @@ export const profileRouter = createTRPCRouter({
                 summary: z.string(),
             })
         )
-        .mutation(({ ctx, input }) => {
+        .mutation(async ({ ctx, input }) => {
             const session = ctx.session;
 
-            return ctx.prisma.profile.create({
-                data: {
-                    userId: session.user.id,
-                    name: input.name,
+            // TODO: transaction/better verification
+            const hasPermission = await ctx.prisma.profile
+                .findFirst({
+                    where: {
+                        username: input.username,
+                    },
+                })
+                .then((r) => r === null || r.userId === session.user.id);
+
+            if (!hasPermission) {
+                throw new TRPCError({
+                    code: "FORBIDDEN",
+                    message: "You do not have access to this profile.",
+                });
+            }
+
+            const data = {
+                userId: session.user.id,
+                name: input.name,
+                username: input.username,
+                summary: input.summary,
+            };
+
+            return ctx.prisma.profile.upsert({
+                where: {
                     username: input.username,
-                    summary: input.summary,
                 },
+                update: data,
+                create: data,
                 include: profileInclude,
             });
         }),
