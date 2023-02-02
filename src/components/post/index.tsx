@@ -2,8 +2,8 @@ import {
     ArrowPathRoundedSquareIcon,
     ChatBubbleLeftIcon,
     HeartIcon,
-    UserIcon,
 } from "@heroicons/react/24/outline";
+import { UserIcon } from "@heroicons/react/24/solid";
 import type { Prisma } from "@prisma/client";
 import classNames from "classnames";
 import Image from "next/image";
