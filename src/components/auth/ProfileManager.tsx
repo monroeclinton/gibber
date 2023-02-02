@@ -41,8 +41,10 @@ const ProfileManager: React.FC = () => {
             }
         >
             <>
-                {!showCreate && <SelectProfile />}
-                {showCreate && <CreateProfile />}
+                {profileManager === "select" && <SelectProfileForm />}
+                {(profileManager === "create" || profileManager === "edit") && (
+                    <ProfileForm />
+                )}
                 <hr className="my-6 h-px border-0 bg-neutral-200" />
                 <div className="mt-6 flex">
                     <Button
@@ -66,7 +68,7 @@ const ProfileManager: React.FC = () => {
     );
 };
 
-const SelectProfile: React.FC = () => {
+const SelectProfileForm: React.FC = () => {
     const profileId = getProfileId();
 
     const profiles = api.profile.getAll.useQuery();
@@ -118,14 +120,25 @@ const SelectProfile: React.FC = () => {
     );
 };
 
-const CreateProfile: React.FC = () => {
+const ProfileForm: React.FC = () => {
     const utils = api.useContext();
+
+    const profileId = getProfileId();
 
     const [name, setName] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [summary, setSummary] = useState<string>("");
 
-    const profile = api.profile.create.useMutation({
+    const profile = api.profile.getById.useQuery(
+        {
+            id: profileId as string,
+        },
+        {
+            enabled: !!profileId,
+        }
+    );
+
+    const mutation = api.profile.upsert.useMutation({
         onSuccess: (data) => {
             setProfileId(data.id);
             setUsername("");
@@ -138,18 +151,40 @@ const CreateProfile: React.FC = () => {
                     return [data];
                 }
             });
+
+            utils.profile.getByUsername.setData(
+                { username: data.username },
+                () => {
+                    return data;
+                }
+            );
+
+            utils.profile.getById.setData({ id: data.id }, () => {
+                return data;
+            });
         },
     });
 
-    const createProfile = () => {
-        profile.mutate({ name, username, summary });
+    const onSubmit = () => {
+        mutation.mutate({ name, username, summary });
     };
 
+    useEffect(() => {
+        if (profile.data) {
+            setName(profile.data.name);
+            setUsername(profile.data.username);
+
+            if (profile.data.summary) {
+                setSummary(profile.data.summary);
+            }
+        }
+    }, [profile.data]);
+
     return (
-        <div>
-            {profile.isError && (
+        <>
+            {mutation.isError && (
                 <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800">
-                    {profile.error.message}
+                    {mutation.error.message}
                 </div>
             )}
             <div className="mt-6 flex">
@@ -180,11 +215,11 @@ const CreateProfile: React.FC = () => {
                 ></textarea>
             </div>
             <div className="mt-6 flex">
-                <Button className="grow" onClick={createProfile}>
-                    Create
+                <Button className="grow" onClick={onSubmit}>
+                    {profile.data ? "Edit" : "Create"}
                 </Button>
             </div>
-        </div>
+        </>
     );
 };
 
