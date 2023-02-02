@@ -1,6 +1,8 @@
+import { useAtom } from "jotai";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
+import { profileManagerAtom } from "../../atoms";
 import { api } from "../../utils/api";
 import { getProfileId, setProfileId } from "../../utils/use-profile";
 import Button from "../button";
@@ -10,25 +12,34 @@ const ProfileManager: React.FC = () => {
     const { status: sessionStatus } = useSession();
     const profileId = getProfileId();
 
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [showCreate, setShowCreate] = useState<boolean>(false);
+    const [profileManager, setProfileManager] = useAtom(profileManagerAtom);
 
     useEffect(() => {
-        const onStorage = () => setIsOpen(getProfileId() === null);
+        const onStorage = () => {
+            setProfileManager(getProfileId() === null ? "select" : null);
+        };
 
         window.addEventListener("storage", onStorage);
 
         return () => window.removeEventListener("storage", onStorage);
-    }, []);
+    }, [setProfileManager]);
 
     useEffect(() => {
         if (sessionStatus === "authenticated" && profileId === null) {
-            setIsOpen(true);
+            setProfileManager("select");
         }
-    }, [sessionStatus, profileId]);
+    }, [sessionStatus, profileId, setProfileManager]);
 
     return (
-        <Modal isOpen={isOpen} title="Profile Management">
+        <Modal
+            isOpen={profileManager !== null}
+            title="Profile Management"
+            onClose={
+                profileManager === "edit"
+                    ? () => setProfileManager(null)
+                    : undefined
+            }
+        >
             <>
                 {!showCreate && <SelectProfile />}
                 {showCreate && <CreateProfile />}
@@ -37,9 +48,17 @@ const ProfileManager: React.FC = () => {
                     <Button
                         className="grow"
                         color="secondary"
-                        onClick={() => setShowCreate(!showCreate)}
+                        onClick={() =>
+                            setProfileManager(
+                                profileManager === "select"
+                                    ? "create"
+                                    : "select"
+                            )
+                        }
                     >
-                        {showCreate ? "Select Profile" : "New Profile"}
+                        {profileManager === "select"
+                            ? "New Profile"
+                            : "Select Profile"}
                     </Button>
                 </div>
             </>
