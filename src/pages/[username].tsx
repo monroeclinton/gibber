@@ -86,7 +86,7 @@ const Profile: NextPage = () => {
             )}
             {profile.data && (
                 <div className="max-w-[615px]">
-                    <div className="aspect-w-3 aspect-h-1 bg-neutral-50">
+                    <div className="aspect-w-3 aspect-h-1 bg-neutral-200">
                         {/*
                         {profile.data.header && (
                             <Image
