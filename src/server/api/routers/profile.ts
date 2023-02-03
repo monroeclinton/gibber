@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 const profileInclude = {
+    header: true,
     avatar: true,
 };
 

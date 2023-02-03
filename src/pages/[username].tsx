@@ -87,16 +87,14 @@ const Profile: NextPage = () => {
             {profile.data && (
                 <div className="max-w-[615px]">
                     <div className="aspect-w-3 aspect-h-1 bg-neutral-200">
-                        {/*
                         {profile.data.header && (
                             <Image
                                 alt="Person's header"
-                                src={profile.data.header}
+                                src={profile.data.header.url}
                                 width={615}
                                 height={205}
                             />
                         )}
-                        */}
                     </div>
                     <div className="absolute left-6 top-2.5">
                         <NavButton />

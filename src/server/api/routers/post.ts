@@ -18,6 +18,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 const postInclude = {
     profile: {
         include: {
+            header: true,
             avatar: true,
         },
     },
