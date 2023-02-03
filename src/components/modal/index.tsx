@@ -57,15 +57,16 @@ const Modal: React.FC<IModalProps> = ({ isOpen, onClose, title, children }) => {
     );
 };
 
-const Mask: React.FC<{ state: string }> = ({ state }) => {
-    const [, setNavOpen] = useAtom(navOpenAtom);
-
+const Mask: React.FC<{ state: string; onClose?: () => void }> = ({
+    state,
+    onClose,
+}) => {
     const className = classNames(defaultClassName, "bg-black", {
         "opacity-0": [ENTERING, EXITING].includes(state),
         "opacity-40": ENTERED === state,
     });
 
-    return <div className={className} onClick={() => setNavOpen(false)} />;
+    return <div className={className} onClick={onClose} />;
 };
 
 const Content: React.FC<{
