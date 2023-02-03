@@ -386,8 +386,8 @@ const ProfileForm: React.FC = () => {
                 ></textarea>
             </div>
             <div className="mt-6 flex">
-                <Button className="grow" onClick={onSubmit}>
-                    {profile.data ? "Edit" : "Create"}
+                <Button className="grow" onClick={() => void onSubmit()}>
+                    {profile.data ? "Save" : "Create"}
                 </Button>
             </div>
         </>
