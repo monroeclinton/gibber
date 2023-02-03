@@ -170,7 +170,7 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
             <div className="mt-12 flex flex-col justify-center px-8">
                 <AuthCard />
                 <div className="relative mt-16">
-                    {top !== undefined && (
+                    {top >= 0 && (
                         <div
                             className="absolute top-[138px] -right-8 h-[45px] rounded border-r-2 border-red-700"
                             style={{ top: top.toString() + "px" }}
