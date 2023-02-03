@@ -37,9 +37,10 @@ model Attachment {
 }
 
 model File {
-    id          String    @id @default(cuid())
+    id          String        @id @default(cuid())
     attachments Attachment[]
-    profiles    Profile[]
+    headers     Profile[]     @relation(name: "HeaderFile")
+    avatars     Profile[]     @relation(name: "AvatarFile")
     type        String
     url         String
     mime        String
@@ -56,8 +57,10 @@ model Profile {
     posts             Post[]
     userId            String
     user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    headerId          String?
+    header            File?     @relation(name: "HeaderFile", fields: [headerId], references: [id], onDelete: Cascade)
     avatarId          String?
-    avatar            File?     @relation(fields: [avatarId], references: [id], onDelete: Cascade)
+    avatar            File?     @relation(name: "AvatarFile", fields: [avatarId], references: [id], onDelete: Cascade)
     name              String
     username          String    @unique
     summary           String?
