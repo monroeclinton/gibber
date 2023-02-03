@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import { useAtom } from "jotai";
 import { useRef } from "react";
 import { Transition } from "react-transition-group";
 import {
@@ -9,7 +8,6 @@ import {
     EXITING,
 } from "react-transition-group/Transition";
 
-import { navOpenAtom } from "../../atoms";
 import CloseButton from "../button/CloseButton";
 
 // Make sure you change the tailwind duration too,
