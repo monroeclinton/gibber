@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Transition } from "react-transition-group";
 import {
     ENTERED,
@@ -27,6 +27,14 @@ interface IModalProps {
 
 const Modal: React.FC<IModalProps> = ({ isOpen, onClose, title, children }) => {
     const nodeRef = useRef(null);
+
+    useEffect(() => {
+        document.body.style.overflow = isOpen ? "hidden" : "unset";
+
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, [isOpen]);
 
     return (
         <Transition nodeRef={nodeRef} in={isOpen} timeout={duration}>
