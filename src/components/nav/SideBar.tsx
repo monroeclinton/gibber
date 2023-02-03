@@ -131,23 +131,32 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
         }
     );
 
-    const items = sidebarItems
-        .filter((item) => !item.auth || sessionStatus === "authenticated")
-        .map((item) => (
-            <Link
-                className={classNames(
-                    "flex items-center justify-end rounded bg-gradient-to-r py-2 hover:from-neutral-100",
-                    {
-                        "text-red-700": item.url === router.asPath,
-                    }
-                )}
-                href={item.url}
-                key={item.url + item.text}
-            >
-                <p className="mr-6 text-xl">{item.text}</p>
-                <item.icon width={30} height={30} />
-            </Link>
-        ));
+    const activeItems = sidebarItems.filter(
+        (item) => !item.auth || sessionStatus === "authenticated"
+    );
+
+    const items = activeItems.map((item) => (
+        <Link
+            className={classNames(
+                "flex h-[45px] items-center justify-end rounded bg-gradient-to-r hover:from-neutral-100",
+                {
+                    "text-red-700": item.url === router.asPath,
+                }
+            )}
+            href={item.url}
+            key={item.url + item.text}
+        >
+            <p className="mr-6 text-xl">{item.text}</p>
+            <item.icon width={30} height={30} />
+        </Link>
+    ));
+
+    const top =
+        activeItems
+            .map((item) => {
+                return item.url;
+            })
+            .indexOf(router.asPath) * 45;
 
     return (
         <div className={className}>
@@ -160,8 +169,13 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
             </TopBar>
             <div className="mt-12 flex flex-col justify-center px-8">
                 <AuthCard />
-                <div className="mt-16">
-                    <div className="absolute right-0 h-[45px] rounded border-r-2 border-red-700" />
+                <div className="relative mt-16">
+                    {top !== undefined && (
+                        <div
+                            className="absolute top-[138px] -right-8 h-[45px] rounded border-r-2 border-red-700"
+                            style={{ top: top.toString() + "px" }}
+                        />
+                    )}
                     {items}
                 </div>
             </div>
