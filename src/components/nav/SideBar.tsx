@@ -220,7 +220,7 @@ const AuthCard: React.FC = () => {
                 />
             )}
             {!profile.data?.avatar && (
-                <div className="h-[75px] w-[75px] rounded-full bg-neutral-100">
+                <div className="h-[75px] w-[75px] rounded-full bg-neutral-200">
                     <SolidUserIcon className="m-[25%] w-1/2 text-neutral-400" />
                 </div>
             )}

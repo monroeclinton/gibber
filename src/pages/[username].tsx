@@ -106,7 +106,7 @@ const Profile: NextPage = () => {
                             <div className="relative shrink-0 basis-[100px]">
                                 <div
                                     className={className(
-                                        "absolute top-[-50px] box-content h-[100px] w-[100px] overflow-hidden rounded-full border-2 border-white bg-neutral-100",
+                                        "absolute top-[-50px] box-content h-[100px] w-[100px] overflow-hidden rounded-full border-2 border-white bg-neutral-200",
                                         {
                                             "border-opacity-25 bg-clip-padding":
                                                 profile.data.avatar,

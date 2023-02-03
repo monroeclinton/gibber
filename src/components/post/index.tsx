@@ -33,7 +33,7 @@ const Post: React.FC<{ post: IPost }> = ({ post }) => {
                     className={classNames(
                         "h-[50px] w-[50px] overflow-hidden rounded-full",
                         {
-                            "bg-neutral-100": !post.profile.avatar,
+                            "bg-neutral-200": !post.profile.avatar,
                         }
                     )}
                 >
