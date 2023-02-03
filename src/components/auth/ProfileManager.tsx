@@ -269,15 +269,25 @@ const ProfileForm: React.FC = () => {
     };
 
     useEffect(() => {
-        if (profile.data) {
+        if (profile.data && init) {
             setName(profile.data.name);
             setUsername(profile.data.username);
+
+            if (profile.data.header) {
+                setHeader({ gibberFile: profile.data.header });
+            }
+
+            if (profile.data.avatar) {
+                setAvatar({ gibberFile: profile.data.avatar });
+            }
 
             if (profile.data.summary) {
                 setSummary(profile.data.summary);
             }
+
+            setInit(false);
         }
-    }, [profile.data]);
+    }, [profile.data, init]);
 
     return (
         <>
