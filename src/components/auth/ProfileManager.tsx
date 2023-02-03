@@ -1,6 +1,10 @@
+import { PlusIcon } from "@heroicons/react/24/solid";
+import type { File as GibberFile } from "@prisma/client";
 import { useAtom } from "jotai";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { profileManagerAtom } from "../../atoms";
 import { api } from "../../utils/api";
@@ -11,6 +15,8 @@ import {
 } from "../../utils/use-profile";
 import Button from "../button";
 import Modal from "../modal";
+
+type FileAndGibberFile = { file?: File; gibberFile: GibberFile };
 
 const ProfileManager: React.FC = () => {
     const { status: sessionStatus } = useSession();
@@ -121,9 +127,21 @@ const ProfileForm: React.FC = () => {
 
     const profileId = getProfileId();
 
+    const [, setProfileManager] = useAtom(profileManagerAtom);
+
+    const avatarRef = useRef<HTMLInputElement>(null);
+    const headerRef = useRef<HTMLInputElement>(null);
+
+    const [init, setInit] = useState<boolean>(true);
+    const [header, setHeader] = useState<FileAndGibberFile | null>();
+    const [avatar, setAvatar] = useState<FileAndGibberFile | null>();
     const [name, setName] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [summary, setSummary] = useState<string>("");
+
+    const presignedUrls = api.post.createPresignedUrls.useQuery({
+        count: 2,
+    });
 
     const profile = api.profile.getById.useQuery(
         {
@@ -139,6 +157,8 @@ const ProfileForm: React.FC = () => {
             setProfileId(data.id);
             setUsername("");
             setSummary("");
+
+            setProfileManager(null);
 
             utils.profile.getAll.setData(undefined, (prevData) => {
                 if (prevData) {
@@ -161,8 +181,91 @@ const ProfileForm: React.FC = () => {
         },
     });
 
-    const onSubmit = () => {
-        mutation.mutate({ name, username, summary });
+    const onHeaderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const file = e.target.files[0];
+            if (file) {
+                setHeader({
+                    file,
+                    gibberFile: {
+                        id: uuidv4(),
+                        type: "IMAGE",
+                        url: URL.createObjectURL(file),
+                        mime: file.type,
+                        name: file.name,
+                        extension: file.name.split(".").pop() as string,
+                        size: file.size,
+                        height: null,
+                        width: null,
+                        createdAt: new Date(),
+                    },
+                });
+            }
+        }
+    };
+
+    const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const file = e.target.files[0];
+            if (file) {
+                setAvatar({
+                    file,
+                    gibberFile: {
+                        id: uuidv4(),
+                        type: "IMAGE",
+                        url: URL.createObjectURL(file),
+                        mime: file.type,
+                        name: file.name,
+                        extension: file.name.split(".").pop() as string,
+                        size: file.size,
+                        height: null,
+                        width: null,
+                        createdAt: new Date(),
+                    },
+                });
+            }
+        }
+    };
+
+    const onSubmit = async () => {
+        let headerUpload, avatarUpload;
+
+        if (presignedUrls.data) {
+            const headerUploadUrl = presignedUrls.data[0];
+            const avatarUploadUrl = presignedUrls.data[1];
+
+            if (headerUploadUrl && header && header.file) {
+                await fetch(headerUploadUrl.url, {
+                    method: "PUT",
+                    body: header.file,
+                });
+
+                headerUpload = {
+                    key: headerUploadUrl.key,
+                    ext: header.file.name.split(".").pop() as string,
+                };
+            }
+
+            if (avatarUploadUrl && avatar && avatar.file) {
+                await fetch(avatarUploadUrl.url, {
+                    method: "PUT",
+                    body: avatar.file,
+                });
+
+                avatarUpload = {
+                    key: avatarUploadUrl.key,
+                    ext: avatar.file.name.split(".").pop() as string,
+                };
+            }
+        }
+
+        mutation.mutate({
+            header: headerUpload,
+            avatar: avatarUpload,
+            name,
+            username,
+            summary,
+        });
     };
 
     useEffect(() => {
@@ -183,6 +286,68 @@ const ProfileForm: React.FC = () => {
                     {mutation.error.message}
                 </div>
             )}
+
+            <div className="mt-6 flex flex-col">
+                <input
+                    className="hidden"
+                    type="file"
+                    ref={headerRef}
+                    onChange={onHeaderChange}
+                />
+                <input
+                    className="hidden"
+                    type="file"
+                    ref={avatarRef}
+                    onChange={onAvatarChange}
+                />
+
+                <div className="aspect-w-3 aspect-h-1 bg-neutral-200">
+                    <div className="flex items-center justify-center">
+                        {header && (
+                            <Image
+                                alt="Header image"
+                                className="h-full w-full"
+                                src={header.gibberFile.url}
+                                width={615}
+                                height={205}
+                            />
+                        )}
+
+                        <Button
+                            className="absolute"
+                            color="secondary"
+                            iconOnly
+                            onClick={() => headerRef.current?.click()}
+                        >
+                            <PlusIcon width={20} height={20} />
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="relative shrink-0 basis-[50px]">
+                    <div className="absolute top-[-50px] left-6 box-content flex h-[100px] w-[100px] items-center justify-center overflow-hidden rounded-full border-2 border-white bg-neutral-200">
+                        {avatar && (
+                            <Image
+                                alt="Avatar image"
+                                className="h-full w-full"
+                                src={avatar.gibberFile.url}
+                                width={100}
+                                height={100}
+                            />
+                        )}
+
+                        <Button
+                            className="absolute"
+                            color="secondary"
+                            iconOnly
+                            onClick={() => avatarRef.current?.click()}
+                        >
+                            <PlusIcon width={20} height={20} />
+                        </Button>
+                    </div>
+                </div>
+            </div>
+
             <div className="mt-6 flex">
                 <input
                     className="grow rounded-lg border-2 border-none bg-neutral-100 p-3.5 placeholder:text-neutral-600 focus:outline-none"
