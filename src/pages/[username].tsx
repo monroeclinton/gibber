@@ -49,6 +49,60 @@ const Profile: NextPage = () => {
         }
     );
 
+    const createFriendship = api.profile.createFriendship.useMutation({
+        onSuccess: () => {
+            if (profile.data) {
+                utils.profile.getByUsername.setData(
+                    { profileId, username: profile.data.username },
+                    (prevData) => {
+                        if (prevData) {
+                            prevData.isFollowing = true;
+                            prevData.followersCount += 1;
+                        }
+
+                        return prevData;
+                    }
+                );
+            }
+        },
+    });
+
+    const deleteFriendship = api.profile.deleteFriendship.useMutation({
+        onSuccess: () => {
+            if (profile.data) {
+                utils.profile.getByUsername.setData(
+                    { profileId, username: profile.data.username },
+                    (prevData) => {
+                        if (prevData) {
+                            prevData.isFollowing = false;
+                            prevData.followersCount -= 1;
+                        }
+
+                        return prevData;
+                    }
+                );
+            }
+        },
+    });
+
+    const onFollow = () => {
+        if (profileId && profile.data) {
+            createFriendship.mutate({
+                profileId,
+                followedId: profile.data.id,
+            });
+        }
+    };
+
+    const onUnfollow = () => {
+        if (profileId && profile.data) {
+            deleteFriendship.mutate({
+                profileId,
+                followedId: profile.data.id,
+            });
+        }
+    };
+
     if (profile.isError && profile.error.data?.httpStatus === 404) {
         return (
             <>
