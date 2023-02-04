@@ -188,6 +188,28 @@ const Profile: NextPage = () => {
                                 </p>
                             </div>
                         </div>
+                        {profile.data.id !== profileId &&
+                            sessionStatus === "authenticated" && (
+                                <div className="flex">
+                                    <Button
+                                        color={
+                                            profile.data.isFollowing
+                                                ? "secondary"
+                                                : "primary"
+                                        }
+                                        className="grow"
+                                        onClick={
+                                            profile.data.isFollowing
+                                                ? onUnfollow
+                                                : onFollow
+                                        }
+                                    >
+                                        {profile.data.isFollowing
+                                            ? "Unfollow"
+                                            : "Follow"}
+                                    </Button>
+                                </div>
+                            )}
                         {profile.data.id === profileId && (
                             <div className="flex">
                                 <Button
