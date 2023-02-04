@@ -19,6 +19,8 @@ const Profile: NextPage = () => {
     const router = useRouter();
     const { username } = router.query;
 
+    const utils = api.useContext();
+
     const profileId = getProfileId();
 
     const { status: sessionStatus } = useSession();
@@ -27,6 +29,7 @@ const Profile: NextPage = () => {
 
     const profile = api.profile.getByUsername.useQuery(
         {
+            profileId,
             username: username as string,
         },
         {

@@ -29,6 +29,7 @@ export const profileRouter = createTRPCRouter({
     getByUsername: publicProcedure
         .input(
             z.object({
+                profileId: z.string().or(z.null()),
                 username: z.string(),
             })
         )
@@ -47,7 +48,23 @@ export const profileRouter = createTRPCRouter({
                 });
             }
 
-            return profile;
+            let isFollowing = false;
+
+            if (input.profileId) {
+                isFollowing = await ctx.prisma.follow
+                    .findFirst({
+                        where: {
+                            followedId: profile.id,
+                            followerId: input.profileId,
+                        },
+                    })
+                    .then((r) => r !== null);
+            }
+
+            return {
+                isFollowing,
+                ...profile,
+            };
         }),
     getById: protectedProcedure
         .input(
