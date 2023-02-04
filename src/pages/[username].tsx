@@ -256,7 +256,8 @@ const Profile: NextPage = () => {
                             </p>
                         </div>
                     </div>
-                    {sessionStatus === "authenticated" && <CreatePost />}
+                    {sessionStatus === "authenticated" &&
+                        profile.data.id === profileId && <CreatePost />}
                     {posts.data &&
                         posts.data.map((post) => (
                             <Post post={post} key={post.id} />
