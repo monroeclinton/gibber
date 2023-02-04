@@ -46,6 +46,33 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
         }),
+    getFeedByProfileId: publicProcedure
+        .input(z.object({ profileId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const follows = await ctx.prisma.follow.findMany({
+                where: {
+                    followerId: input.profileId,
+                },
+            });
+
+            // TODO: Make protected
+            return ctx.prisma.post.findMany({
+                where: {
+                    profileId: {
+                        in: [
+                            input.profileId,
+                            ...follows.map((follow) => follow.followedId),
+                        ],
+                    },
+                },
+                orderBy: [
+                    {
+                        createdAt: "desc",
+                    },
+                ],
+                include: postInclude,
+            });
+        }),
     create: protectedProcedure
         .input(
             z.object({
