@@ -145,7 +145,7 @@ const Post: React.FC<{ post: WithIsFavorited<IPost> }> = ({ post }) => {
                     <Attachments attachments={post.attachments} />
                 </div>
             )}
-            <div className="mt-3.5 flex justify-between">
+            <div className="mt-3.5 flex min-w-[45px] cursor-pointer justify-between">
                 <div className="flex items-center">
                     <ChatBubbleLeftIcon
                         className="mr-3"
@@ -154,7 +154,7 @@ const Post: React.FC<{ post: WithIsFavorited<IPost> }> = ({ post }) => {
                     />
                     <p>{post.repliesCount}</p>
                 </div>
-                <div className="flex items-center">
+                <div className="flex min-w-[45px] cursor-pointer items-center">
                     <ArrowPathRoundedSquareIcon
                         className="mr-3"
                         width={20}
@@ -162,8 +162,20 @@ const Post: React.FC<{ post: WithIsFavorited<IPost> }> = ({ post }) => {
                     />
                     <p>{post.reblogsCount}</p>
                 </div>
-                <div className="flex items-center">
-                    <HeartIcon className="mr-3" width={20} height={20} />
+                <div
+                    className="flex min-w-[45px] cursor-pointer items-center"
+                    onClick={onFavorite}
+                >
+                    {!post.isFavorited && (
+                        <HeartIcon className="mr-3" width={20} height={20} />
+                    )}
+                    {post.isFavorited && (
+                        <SolidHeartIcon
+                            className="mr-3 text-red-500"
+                            width={20}
+                            height={20}
+                        />
+                    )}
                     <p>{post.favoritesCount}</p>
                 </div>
             </div>
