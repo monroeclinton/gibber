@@ -262,6 +262,11 @@ const Profile: NextPage = () => {
                         posts.data.map((post) => (
                             <Post post={post} key={post.id} />
                         ))}
+                    {posts.isFetched && posts.data?.length === 0 && (
+                        <div className="bg-neutral-50 p-4 text-neutral-800">
+                            There are no posts here.
+                        </div>
+                    )}
                 </div>
             )}
         </>
