@@ -56,7 +56,7 @@ export const postRouter = createTRPCRouter({
             });
 
             // TODO: Make protected
-            return ctx.prisma.post.findMany({
+            const posts = await ctx.prisma.post.findMany({
                 where: {
                     profileId: {
                         in: [
@@ -71,6 +71,20 @@ export const postRouter = createTRPCRouter({
                     },
                 ],
                 include: postInclude,
+            });
+
+            const favorites = await ctx.prisma.favorite.findMany({
+                where: {
+                    profileId: input.profileId,
+                },
+            });
+
+            const favoriteIds = favorites.map((favorite) => favorite.postId);
+
+            return posts.map((post) => {
+                const isFavorited = favoriteIds.includes(post.id);
+
+                return { isFavorited, ...post };
             });
         }),
     create: protectedProcedure
