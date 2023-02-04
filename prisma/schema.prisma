@@ -52,6 +52,16 @@ model File {
     createdAt   DateTime  @default(now())
 }
 
+model Follow {
+    id          String   @id @default(cuid())
+    followedId  String
+    followed    Profile  @relation(name: "FollowedProfile", fields: [followedId], references: [id], onDelete: Cascade)
+    followerId  String
+    follower    Profile  @relation(name: "FollowerProfile", fields: [followerId], references: [id], onDelete: Cascade)
+
+    @@unique([followedId, followerId])
+}
+
 model Profile {
     id                String    @id @default(cuid())
     posts             Post[]
@@ -66,6 +76,9 @@ model Profile {
     summary           String?
     followingCount    Int       @default(0)
     followersCount    Int       @default(0)
+    following         Follow[]  @relation(name: "FollowerProfile")
+    followers         Follow[]  @relation(name: "FollowedProfile")
+    favorites         Favorite[]
     createdAt         DateTime  @default(now())
     updatedAt         DateTime  @updatedAt
 }
