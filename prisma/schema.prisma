@@ -23,6 +23,7 @@ model Post {
     repliesCount   Int           @default(0)
     reblogsCount   Int           @default(0)
     favoritesCount Int           @default(0)
+    favorites      Favorite[]
     createdAt      DateTime      @default(now())
     updatedAt      DateTime      @updatedAt
 }
@@ -50,6 +51,16 @@ model File {
     height      Int?
     width       Int?
     createdAt   DateTime  @default(now())
+}
+
+model Favorite {
+    id          String   @id @default(cuid())
+    postId      String
+    post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+    profileId   String
+    profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+    @@unique([postId, profileId])
 }
 
 model Follow {
