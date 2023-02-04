@@ -89,6 +89,112 @@ export const profileRouter = createTRPCRouter({
 
             return profile;
         }),
+    createFriendship: protectedProcedure
+        .input(
+            z.object({
+                profileId: z.string(),
+                followedId: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const session = ctx.session;
+
+            const profile = await ctx.prisma.profile.findFirst({
+                where: {
+                    id: input.profileId,
+                },
+            });
+
+            const hasPermission = profile && profile.userId === session.user.id;
+
+            if (!hasPermission) {
+                throw new TRPCError({
+                    code: "FORBIDDEN",
+                    message: "You do not have access to this profile.",
+                });
+            }
+
+            const data = {
+                followedId: input.followedId,
+                followerId: input.profileId,
+            };
+
+            const follow = await ctx.prisma.follow.findFirst({
+                where: data,
+            });
+
+            if (!follow) {
+                await ctx.prisma.profile.update({
+                    where: { id: data.followedId },
+                    data: { followersCount: { increment: 1 } },
+                });
+
+                await ctx.prisma.profile.update({
+                    where: { id: data.followerId },
+                    data: { followingCount: { increment: 1 } },
+                });
+
+                return await ctx.prisma.follow.create({
+                    data,
+                });
+            }
+
+            return follow;
+        }),
+    deleteFriendship: protectedProcedure
+        .input(
+            z.object({
+                profileId: z.string(),
+                followedId: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const session = ctx.session;
+
+            const hasPermission = await ctx.prisma.profile
+                .findFirst({
+                    where: {
+                        id: input.profileId,
+                    },
+                })
+                .then((r) => r === null || r.userId === session.user.id);
+
+            if (!hasPermission) {
+                throw new TRPCError({
+                    code: "FORBIDDEN",
+                    message: "You do not have access to this profile.",
+                });
+            }
+
+            const data = {
+                followedId: input.followedId,
+                followerId: input.profileId,
+            };
+
+            const follow = await ctx.prisma.follow.findFirst({
+                where: data,
+            });
+
+            if (follow) {
+                await ctx.prisma.profile.update({
+                    where: { id: data.followedId },
+                    data: { followersCount: { decrement: 1 } },
+                });
+
+                await ctx.prisma.profile.update({
+                    where: { id: data.followerId },
+                    data: { followingCount: { decrement: 1 } },
+                });
+
+                return await ctx.prisma.follow.delete({
+                    where: {
+                        followedId_followerId: data,
+                    },
+                });
+            }
+
+            return follow;
+        }),
     upsert: protectedProcedure
         .input(
             z.object({
