@@ -3,11 +3,16 @@ import {
     ChatBubbleLeftIcon,
     HeartIcon,
 } from "@heroicons/react/24/outline";
-import { UserIcon } from "@heroicons/react/24/solid";
+import {
+    HeartIcon as SolidHeartIcon,
+    UserIcon,
+} from "@heroicons/react/24/solid";
 import type { Prisma } from "@prisma/client";
 import classNames from "classnames";
 import Image from "next/image";
 
+import { api } from "../../utils/api";
+import { getProfileId } from "../../utils/use-profile";
 import Attachments from "./Attachments";
 
 type IPost = Prisma.PostGetPayload<{
@@ -25,7 +30,81 @@ type IPost = Prisma.PostGetPayload<{
     };
 }>;
 
-const Post: React.FC<{ post: IPost }> = ({ post }) => {
+type WithIsFavorited<T> = T & {
+    isFavorited: boolean;
+};
+
+const Post: React.FC<{ post: WithIsFavorited<IPost> }> = ({ post }) => {
+    const utils = api.useContext();
+
+    const profileId = getProfileId();
+
+    const favorite = api.favorite.create.useMutation({
+        onSuccess: () => {
+            if (profileId) {
+                utils.post.getFeedByProfileId.setData(
+                    { profileId },
+                    (prevData) => {
+                        if (prevData) {
+                            prevData = prevData.map((data) => {
+                                if (data.id === post.id) {
+                                    data.isFavorited = true;
+                                    data.favoritesCount += 1;
+                                }
+
+                                return data;
+                            });
+                        }
+
+                        return prevData;
+                    }
+                );
+            }
+        },
+    });
+
+    const unfavorite = api.favorite.delete.useMutation({
+        onSuccess: () => {
+            if (profileId) {
+                utils.post.getFeedByProfileId.setData(
+                    { profileId },
+                    (prevData) => {
+                        if (prevData) {
+                            prevData = prevData.map((data) => {
+                                if (data.id === post.id) {
+                                    data.isFavorited = false;
+                                    data.favoritesCount -= 1;
+                                }
+
+                                return data;
+                            });
+                        }
+
+                        return prevData;
+                    }
+                );
+            }
+        },
+    });
+
+    const onFavorite = () => {
+        if (!profileId) {
+            return;
+        }
+
+        if (!post.isFavorited) {
+            favorite.mutate({
+                profileId,
+                postId: post.id,
+            });
+        } else {
+            unfavorite.mutate({
+                profileId,
+                postId: post.id,
+            });
+        }
+    };
+
     return (
         <div className="border-b-2 border-neutral-50 px-6 py-5">
             <div className="flex">
