@@ -231,13 +231,13 @@ const Profile: NextPage = () => {
                                 <span className="font-semibold">
                                     {profile.data.followersCount}
                                 </span>
-                                &nbsp;Followers
+                                <span className="ml-2">Followers</span>
                             </p>
                             <p>
                                 <span className="ml-5 font-semibold">
                                     {profile.data.followingCount}
                                 </span>
-                                &nbsp;Following
+                                <span className="ml-2">Following</span>
                             </p>
                         </div>
                     </div>
