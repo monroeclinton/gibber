@@ -15,7 +15,7 @@ import { env } from "../../../env/server.mjs";
 import { s3Client, s3Server } from "../../s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
-const postInclude = {
+const basePostInclude = {
     profile: {
         include: {
             header: true,
@@ -29,12 +29,19 @@ const postInclude = {
     },
 };
 
+const postInclude = {
+    ...basePostInclude,
+    reblog: {
+        include: basePostInclude,
+    },
+};
+
 export const postRouter = createTRPCRouter({
     getByProfileId: publicProcedure
         .input(z.object({ profileId: z.string() }))
-        .query(({ ctx, input }) => {
+        .query(async ({ ctx, input }) => {
             // TODO: Filter on account
-            return ctx.prisma.post.findMany({
+            const posts = await ctx.prisma.post.findMany({
                 where: {
                     profileId: input.profileId,
                 },
@@ -44,6 +51,45 @@ export const postRouter = createTRPCRouter({
                     },
                 ],
                 include: postInclude,
+            });
+
+            const reblogs = await ctx.prisma.post.findMany({
+                where: {
+                    profileId: input.profileId,
+                    NOT: {
+                        reblogId: null,
+                    },
+                },
+            });
+
+            const favorites = await ctx.prisma.favorite.findMany({
+                where: {
+                    profileId: input.profileId,
+                },
+            });
+
+            const reblogIds = reblogs.map((reblog) => reblog.reblogId);
+            const favoriteIds = favorites.map((favorite) => favorite.postId);
+
+            return posts.map((post) => {
+                let reblog = {};
+                if (post.reblog) {
+                    const isReblogged = reblogIds.includes(post.reblog.id);
+                    const isFavorited = favoriteIds.includes(post.reblog.id);
+
+                    reblog = {
+                        reblog: {
+                            isReblogged,
+                            isFavorited,
+                            ...post.reblog,
+                        },
+                    };
+                }
+
+                const isReblogged = reblogIds.includes(post.id);
+                const isFavorited = favoriteIds.includes(post.id);
+
+                return { isReblogged, isFavorited, ...post, ...reblog };
             });
         }),
     getFeedByProfileId: publicProcedure
@@ -73,18 +119,43 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
+            const reblogs = await ctx.prisma.post.findMany({
+                where: {
+                    profileId: input.profileId,
+                    NOT: {
+                        reblogId: null,
+                    },
+                },
+            });
+
             const favorites = await ctx.prisma.favorite.findMany({
                 where: {
                     profileId: input.profileId,
                 },
             });
 
+            const reblogIds = reblogs.map((reblog) => reblog.reblogId);
             const favoriteIds = favorites.map((favorite) => favorite.postId);
 
             return posts.map((post) => {
+                let reblog = {};
+                if (post.reblog) {
+                    const isReblogged = reblogIds.includes(post.reblog.id);
+                    const isFavorited = favoriteIds.includes(post.reblog.id);
+
+                    reblog = {
+                        reblog: {
+                            isReblogged,
+                            isFavorited,
+                            ...post.reblog,
+                        },
+                    };
+                }
+
+                const isReblogged = reblogIds.includes(post.id);
                 const isFavorited = favoriteIds.includes(post.id);
 
-                return { isFavorited, ...post };
+                return { isReblogged, isFavorited, ...post, ...reblog };
             });
         }),
     create: protectedProcedure
