@@ -4,10 +4,11 @@ import {
     HeartIcon,
 } from "@heroicons/react/24/outline";
 import {
+    ArrowPathRoundedSquareIcon as SolidArrowPathRoundedSquareIcon,
     HeartIcon as SolidHeartIcon,
     UserIcon,
 } from "@heroicons/react/24/solid";
-import type { Prisma } from "@prisma/client";
+import type { Prisma, Profile } from "@prisma/client";
 import classNames from "classnames";
 import Image from "next/image";
 
@@ -27,17 +28,51 @@ type IPost = Prisma.PostGetPayload<{
                 file: true;
             };
         };
+        reblog: {
+            include: {
+                profile: {
+                    include: {
+                        avatar: true;
+                    };
+                };
+                attachments: {
+                    include: {
+                        file: true;
+                    };
+                };
+            };
+        };
     };
 }>;
 
-type WithIsFavorited<T> = T & {
+type WithIsInteractions<T> = T & {
+    isReblogged: boolean;
     isFavorited: boolean;
+    reblog: T & {
+        isReblogged: boolean;
+        isFavorited: boolean;
+    };
 };
 
-const Post: React.FC<{ post: WithIsFavorited<IPost> }> = ({ post }) => {
+const Post: React.FC<{
+    reblogger?: Profile;
+    post: WithIsInteractions<IPost>;
+}> = ({ reblogger, post }) => {
     const utils = api.useContext();
 
     const profileId = getProfileId();
+
+    const reblog = api.reblog.create.useMutation({
+        onSuccess: async () => {
+            await utils.post.getFeedByProfileId.refetch();
+        },
+    });
+
+    const unreblog = api.reblog.delete.useMutation({
+        onSuccess: async () => {
+            await utils.post.getFeedByProfileId.refetch();
+        },
+    });
 
     const favorite = api.favorite.create.useMutation({
         onSuccess: () => {
@@ -87,6 +122,24 @@ const Post: React.FC<{ post: WithIsFavorited<IPost> }> = ({ post }) => {
         },
     });
 
+    const onReblog = () => {
+        if (!profileId) {
+            return;
+        }
+
+        if (!post.isReblogged) {
+            reblog.mutate({
+                profileId,
+                postId: post.id,
+            });
+        } else {
+            unreblog.mutate({
+                profileId,
+                postId: post.id,
+            });
+        }
+    };
+
     const onFavorite = () => {
         if (!profileId) {
             return;
@@ -105,8 +158,22 @@ const Post: React.FC<{ post: WithIsFavorited<IPost> }> = ({ post }) => {
         }
     };
 
+    if (post.reblog) {
+        return <Post reblogger={post.profile} post={post.reblog} />;
+    }
+
     return (
         <div className="border-b-2 border-neutral-50 px-6 py-5">
+            {reblogger && (
+                <div className="mb-3.5 flex text-sm font-semibold text-neutral-600">
+                    <ArrowPathRoundedSquareIcon
+                        className="mr-3"
+                        width={20}
+                        height={20}
+                    />
+                    <p>@{reblogger.username} Reblogged</p>
+                </div>
+            )}
             <div className="flex">
                 <div
                     className={classNames(
@@ -154,12 +221,24 @@ const Post: React.FC<{ post: WithIsFavorited<IPost> }> = ({ post }) => {
                     />
                     <p>{post.repliesCount}</p>
                 </div>
-                <div className="flex min-w-[45px] cursor-pointer items-center">
-                    <ArrowPathRoundedSquareIcon
-                        className="mr-3"
-                        width={20}
-                        height={20}
-                    />
+                <div
+                    className="flex min-w-[45px] cursor-pointer items-center"
+                    onClick={onReblog}
+                >
+                    {!post.isReblogged && (
+                        <ArrowPathRoundedSquareIcon
+                            className="mr-3"
+                            width={20}
+                            height={20}
+                        />
+                    )}
+                    {post.isReblogged && (
+                        <SolidArrowPathRoundedSquareIcon
+                            className="mr-3 text-green-500"
+                            width={20}
+                            height={20}
+                        />
+                    )}
                     <p>{post.reblogsCount}</p>
                 </div>
                 <div
