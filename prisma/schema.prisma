@@ -18,6 +18,9 @@ model Post {
     id             String        @id @default(cuid())
     profileId      String
     profile        Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    reblogId       String?
+    reblog         Post?         @relation(name: "ReblogPost", fields: [reblogId], references: [id])
+    reblogs        Post[]        @relation(name: "ReblogPost")
     attachments    Attachment[]
     content        String?
     repliesCount   Int           @default(0)
