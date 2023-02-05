@@ -29,6 +29,8 @@ model Post {
     favorites      Favorite[]
     createdAt      DateTime      @default(now())
     updatedAt      DateTime      @updatedAt
+
+    @@unique([profileId, reblogId])
 }
 
 model Attachment {
