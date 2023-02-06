@@ -307,4 +307,44 @@ const Post: React.FC<{
     );
 };
 
+const PreviewPost: React.FC<{ post: IPost }> = ({ post }) => {
+    return (
+        <div className="border-neutral-2 rounded border-2 p-3.5">
+            <div className="flex">
+                <div
+                    className={classNames(
+                        "h-[30px] w-[30px] overflow-hidden rounded-full",
+                        {
+                            "bg-neutral-200": !post.profile.avatar,
+                        }
+                    )}
+                >
+                    {!post.profile.avatar && (
+                        <UserIcon className="m-[25%] w-1/2 text-neutral-400" />
+                    )}
+                    {post.profile.avatar && (
+                        <Image
+                            alt="Person's avatar"
+                            src={post.profile.avatar.url}
+                            width={30}
+                            height={30}
+                        />
+                    )}
+                </div>
+                <div className="ml-3.5 flex flex-col justify-center text-sm">
+                    <p>{post.profile.username}</p>
+                    <p>{post.createdAt.toLocaleDateString()}</p>
+                </div>
+            </div>
+
+            {post.content && (
+                <div className="mt-3.5">
+                    <p>{post.content}</p>
+                </div>
+            )}
+        </div>
+    );
+};
+
 export default Post;
+export { PreviewPost };
