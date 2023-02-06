@@ -10,8 +10,11 @@ import {
 } from "@heroicons/react/24/solid";
 import type { Prisma, Profile } from "@prisma/client";
 import classNames from "classnames";
+import { useAtom } from "jotai";
 import Image from "next/image";
+import { useState } from "react";
 
+import { createPostAtom, reblogPostAtom } from "../../atoms";
 import { api } from "../../utils/api";
 import { getProfileId } from "../../utils/use-profile";
 import Attachments from "./Attachments";
@@ -61,6 +64,11 @@ const Post: React.FC<{
     const utils = api.useContext();
 
     const profileId = getProfileId();
+
+    const [, setCreatePost] = useAtom(createPostAtom);
+    const [, setReblogPost] = useAtom(reblogPostAtom);
+
+    const [isReblogDropdownOpen, setReblogDropdownOpen] = useState(false);
 
     const reblog = api.reblog.create.useMutation({
         onSuccess: async () => {
@@ -123,6 +131,8 @@ const Post: React.FC<{
     });
 
     const onReblog = () => {
+        setReblogDropdownOpen(false);
+
         if (!profileId) {
             return;
         }
@@ -138,6 +148,12 @@ const Post: React.FC<{
                 postId: post.id,
             });
         }
+    };
+
+    const onQuoteReblog = () => {
+        setReblogDropdownOpen(false);
+        setCreatePost(true);
+        setReblogPost(post.id);
     };
 
     const onFavorite = () => {
@@ -158,7 +174,7 @@ const Post: React.FC<{
         }
     };
 
-    if (post.reblog) {
+    if (post.reblog && post.content === null) {
         return <Post reblogger={post.profile} post={post.reblog} />;
     }
 
@@ -212,6 +228,11 @@ const Post: React.FC<{
                     <Attachments attachments={post.attachments} />
                 </div>
             )}
+            {post.reblog && (
+                <div className="mt-3.5">
+                    <PreviewPost post={post.reblog} />
+                </div>
+            )}
             <div className="mt-3.5 flex min-w-[45px] cursor-pointer justify-between">
                 <div className="flex items-center">
                     <ChatBubbleLeftIcon
@@ -221,25 +242,49 @@ const Post: React.FC<{
                     />
                     <p>{post.repliesCount}</p>
                 </div>
-                <div
-                    className="flex min-w-[45px] cursor-pointer items-center"
-                    onClick={onReblog}
-                >
-                    {!post.isReblogged && (
-                        <ArrowPathRoundedSquareIcon
-                            className="mr-3"
-                            width={20}
-                            height={20}
-                        />
+                <div className="relative">
+                    <div
+                        className="flex min-w-[45px] cursor-pointer items-center"
+                        onClick={() => setReblogDropdownOpen(true)}
+                    >
+                        {!post.isReblogged && (
+                            <ArrowPathRoundedSquareIcon
+                                className="mr-3"
+                                width={20}
+                                height={20}
+                            />
+                        )}
+                        {post.isReblogged && (
+                            <SolidArrowPathRoundedSquareIcon
+                                className="mr-3 text-green-500"
+                                width={20}
+                                height={20}
+                            />
+                        )}
+                        <p>{post.reblogsCount}</p>
+                    </div>
+                    {isReblogDropdownOpen && (
+                        <div className="absolute left-0 -top-2 mt-2 w-40 rounded-md border border-neutral-200 bg-white shadow">
+                            <div className="py-1" role="none">
+                                <div
+                                    className="block px-4 py-2 transition-all hover:bg-neutral-100"
+                                    onClick={onReblog}
+                                >
+                                    <p>
+                                        {post.isReblogged
+                                            ? "Undo Reblog"
+                                            : "Reblog"}
+                                    </p>
+                                </div>
+                                <div
+                                    className="block px-4 py-2 transition-all hover:bg-neutral-100"
+                                    onClick={onQuoteReblog}
+                                >
+                                    <p>Quote Reblog</p>
+                                </div>
+                            </div>
+                        </div>
                     )}
-                    {post.isReblogged && (
-                        <SolidArrowPathRoundedSquareIcon
-                            className="mr-3 text-green-500"
-                            width={20}
-                            height={20}
-                        />
-                    )}
-                    <p>{post.reblogsCount}</p>
                 </div>
                 <div
                     className="flex min-w-[45px] cursor-pointer items-center"
