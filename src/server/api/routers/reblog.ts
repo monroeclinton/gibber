@@ -68,12 +68,11 @@ export const reblogRouter = createTRPCRouter({
                 });
             }
 
-            const post = await ctx.prisma.post.delete({
+            const post = await ctx.prisma.post.deleteMany({
                 where: {
-                    profileId_reblogId: {
-                        profileId: input.profileId,
-                        reblogId: input.postId,
-                    },
+                    content: null,
+                    profileId: input.profileId,
+                    reblogId: input.postId,
                 },
             });
 
