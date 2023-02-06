@@ -37,6 +37,54 @@ const postInclude = {
 };
 
 export const postRouter = createTRPCRouter({
+    getById: publicProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const post = await ctx.prisma.post.findUniqueOrThrow({
+                where: {
+                    id: input.id,
+                },
+                include: postInclude,
+            });
+
+            const reblogs = await ctx.prisma.post.findMany({
+                where: {
+                    id: input.id,
+                    content: null,
+                    NOT: {
+                        reblogId: null,
+                    },
+                },
+            });
+
+            const favorites = await ctx.prisma.favorite.findMany({
+                where: {
+                    id: input.id,
+                },
+            });
+
+            const reblogIds = reblogs.map((reblog) => reblog.reblogId);
+            const favoriteIds = favorites.map((favorite) => favorite.postId);
+
+            let reblog = {};
+            if (post.reblog) {
+                const isReblogged = reblogIds.includes(post.reblog.id);
+                const isFavorited = favoriteIds.includes(post.reblog.id);
+
+                reblog = {
+                    reblog: {
+                        isReblogged,
+                        isFavorited,
+                        ...post.reblog,
+                    },
+                };
+            }
+
+            const isReblogged = reblogIds.includes(post.id);
+            const isFavorited = favoriteIds.includes(post.id);
+
+            return { isReblogged, isFavorited, ...post, ...reblog };
+        }),
     getByProfileId: publicProcedure
         .input(z.object({ profileId: z.string() }))
         .query(async ({ ctx, input }) => {
