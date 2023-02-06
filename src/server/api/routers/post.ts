@@ -104,6 +104,7 @@ export const postRouter = createTRPCRouter({
             const reblogs = await ctx.prisma.post.findMany({
                 where: {
                     profileId: input.profileId,
+                    content: null,
                     NOT: {
                         reblogId: null,
                     },
@@ -170,6 +171,7 @@ export const postRouter = createTRPCRouter({
             const reblogs = await ctx.prisma.post.findMany({
                 where: {
                     profileId: input.profileId,
+                    content: null,
                     NOT: {
                         reblogId: null,
                     },
