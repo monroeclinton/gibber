@@ -7,6 +7,7 @@ import { useProfile } from "../../../utils/use-profile";
 import Button from "../../button";
 import type { AttachmentType } from "../Attachments";
 import Attachments from "../Attachments";
+import { PreviewPost } from "../index";
 
 type FileAndAttachment = { file: File; attachment: AttachmentType };
 
@@ -152,7 +153,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({ reblogId, onPost }) => {
         presignedUrls.isFetching;
 
     return (
-        <div className="flex flex-col p-3.5">
+        <div className="flex flex-col">
             <textarea
                 rows={4}
                 className="grow rounded-lg border-2 border-none bg-neutral-100 p-3.5 placeholder:text-neutral-600 focus:outline-none"
@@ -168,6 +169,11 @@ const CreatePost: React.FC<ICreatePostProps> = ({ reblogId, onPost }) => {
                         )}
                         onRemoveAttachment={onRemoveAttachment}
                     />
+                </div>
+            )}
+            {reblog.data && (
+                <div className="mt-3.5">
+                    <PreviewPost post={reblog.data} />
                 </div>
             )}
             <div className="mt-3.5 flex items-start">
