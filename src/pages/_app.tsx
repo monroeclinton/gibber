@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react";
 
 import ProfileManager from "../components/auth/ProfileManager";
 import SideBar from "../components/nav/SideBar";
+import CreateModal from "../components/post/create/CreateModal";
 import { api } from "../utils/api";
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -19,6 +20,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                 <Component {...pageProps} />
                 <SideBar />
                 <ProfileManager />
+                <CreateModal />
             </Provider>
         </SessionProvider>
     );
