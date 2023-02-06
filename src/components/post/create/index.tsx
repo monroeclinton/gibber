@@ -10,7 +10,12 @@ import Attachments from "../Attachments";
 
 type FileAndAttachment = { file: File; attachment: AttachmentType };
 
-const CreatePost: React.FC = () => {
+interface ICreatePostProps {
+    reblogId?: string;
+    onPost: () => void;
+}
+
+const CreatePost: React.FC<ICreatePostProps> = ({ reblogId, onPost }) => {
     const { profile } = useProfile();
 
     const utils = api.useContext();
@@ -21,6 +26,15 @@ const CreatePost: React.FC = () => {
     const [previewAttachments, setPreviewAttachments] = useState<
         FileAndAttachment[]
     >([]);
+
+    const reblog = api.post.getById.useQuery(
+        {
+            id: reblogId as string,
+        },
+        {
+            enabled: !!reblogId,
+        }
+    );
 
     const presignedUrls = api.post.createPresignedUrls.useQuery(
         {
@@ -35,9 +49,10 @@ const CreatePost: React.FC = () => {
         onSuccess: (data) => {
             setContent("");
             setPreviewAttachments([]);
+            onPost();
 
             if (profile.data?.id) {
-                utils.post.getByProfileId.setData(
+                utils.post.getFeedByProfileId.setData(
                     { profileId: profile.data.id },
                     (prevData) => {
                         if (prevData) {
@@ -122,6 +137,7 @@ const CreatePost: React.FC = () => {
 
         if (profile.data) {
             post.mutate({
+                reblogId,
                 profileId: profile.data.id,
                 content,
                 files: uploads,
