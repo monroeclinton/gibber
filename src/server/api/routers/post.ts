@@ -265,6 +265,7 @@ export const postRouter = createTRPCRouter({
             z
                 .object({
                     profileId: z.string(),
+                    inReplyToId: z.string(),
                     reblogId: z.string(),
                     content: z.string(),
                     files: z
@@ -276,10 +277,18 @@ export const postRouter = createTRPCRouter({
                         )
                         .max(4),
                 })
-                .partial({ reblogId: true, content: true, files: true })
+                .partial({
+                    inReplyToId: true,
+                    reblogId: true,
+                    content: true,
+                    files: true,
+                })
                 .refine(
-                    ({ reblogId, content, files }) =>
-                        reblogId || content || (files && files.length > 0),
+                    ({ inReplyToId, reblogId, content, files }) =>
+                        inReplyToId ||
+                        reblogId ||
+                        content ||
+                        (files && files.length > 0),
                     { message: "Content, reblog, or files are required" }
                 )
         )
@@ -307,11 +316,26 @@ export const postRouter = createTRPCRouter({
                 // TODO: Validate reblog post exists
                 const post = await tx.post.create({
                     data: {
+                        inReplyToId: input.inReplyToId,
                         reblogId: input.reblogId,
                         profileId: input.profileId,
                         content: input.content,
                     },
                 });
+
+                if (input.inReplyToId) {
+                    await tx.post.update({
+                        where: { id: input.inReplyToId },
+                        data: { repliesCount: { increment: 1 } },
+                    });
+                }
+
+                if (input.reblogId) {
+                    await tx.post.update({
+                        where: { id: input.reblogId },
+                        data: { reblogsCount: { increment: 1 } },
+                    });
+                }
 
                 if (files) {
                     for (const upload of files) {
