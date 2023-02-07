@@ -246,7 +246,7 @@ const Post: React.FC<{
                     <PreviewPost post={post.reblog} />
                 </div>
             )}
-            <div className="mt-3.5 flex min-w-[45px] cursor-pointer justify-between">
+            <div className="mt-3.5 flex min-w-[45px] justify-between hover:cursor-pointer">
                 <div className="flex items-center">
                     <ChatBubbleLeftIcon
                         className="mr-3"
@@ -255,27 +255,25 @@ const Post: React.FC<{
                     />
                     <p>{post.repliesCount}</p>
                 </div>
-                <div className="relative">
-                    <div
-                        className="flex min-w-[45px] cursor-pointer items-center"
-                        onClick={() => setReblogDropdownOpen(true)}
-                    >
-                        {!post.isReblogged && (
-                            <ArrowPathRoundedSquareIcon
-                                className="mr-3"
-                                width={20}
-                                height={20}
-                            />
-                        )}
-                        {post.isReblogged && (
-                            <SolidArrowPathRoundedSquareIcon
-                                className="mr-3 text-green-500"
-                                width={20}
-                                height={20}
-                            />
-                        )}
-                        <p>{post.reblogsCount}</p>
-                    </div>
+                <div
+                    className="relative flex min-w-[45px] items-center hover:cursor-pointer"
+                    onClick={onReblogDropdown}
+                >
+                    {!post.isReblogged && (
+                        <ArrowPathRoundedSquareIcon
+                            className="mr-3"
+                            width={20}
+                            height={20}
+                        />
+                    )}
+                    {post.isReblogged && (
+                        <SolidArrowPathRoundedSquareIcon
+                            className="mr-3 text-green-500"
+                            width={20}
+                            height={20}
+                        />
+                    )}
+                    <p>{post.reblogsCount}</p>
                     {isReblogDropdownOpen && (
                         <div className="absolute left-0 -top-2 mt-2 w-40 rounded-md border border-neutral-200 bg-white shadow">
                             <div className="py-1" role="none">
@@ -300,7 +298,7 @@ const Post: React.FC<{
                     )}
                 </div>
                 <div
-                    className="flex min-w-[45px] cursor-pointer items-center"
+                    className="flex min-w-[45px] items-center hover:cursor-pointer"
                     onClick={onFavorite}
                 >
                     {!post.isFavorited && (
