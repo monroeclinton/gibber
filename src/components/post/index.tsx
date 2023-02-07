@@ -12,6 +12,7 @@ import type { Prisma, Profile } from "@prisma/client";
 import classNames from "classnames";
 import { useAtom } from "jotai";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 import { createPostAtom, reblogPostAtom } from "../../atoms";
@@ -61,6 +62,8 @@ const Post: React.FC<{
     reblogger?: Profile;
     post: WithIsInteractions<IPost>;
 }> = ({ reblogger, post }) => {
+    const router = useRouter();
+
     const utils = api.useContext();
 
     const profileId = getProfileId();
@@ -130,7 +133,13 @@ const Post: React.FC<{
         },
     });
 
-    const onReblog = () => {
+    const onReblogDropdown = (e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
+        setReblogDropdownOpen(true);
+    };
+
+    const onReblog = (e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
         setReblogDropdownOpen(false);
 
         if (!profileId) {
@@ -150,7 +159,8 @@ const Post: React.FC<{
         }
     };
 
-    const onQuoteReblog = () => {
+    const onQuoteReblog = (e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
         setReblogDropdownOpen(false);
         setCreatePost(true);
         setReblogPost(post.id);
@@ -179,7 +189,10 @@ const Post: React.FC<{
     }
 
     return (
-        <div className="border-b-2 border-neutral-50 px-6 py-5">
+        <div
+            className="border-b-2 border-neutral-50 px-6 py-5 transition-colors hover:cursor-pointer hover:bg-neutral-50"
+            onClick={() => void router.push(`/post/${post.id}`)}
+        >
             {reblogger && (
                 <div className="mb-3.5 flex text-sm font-semibold text-neutral-600">
                     <ArrowPathRoundedSquareIcon
@@ -308,8 +321,16 @@ const Post: React.FC<{
 };
 
 const PreviewPost: React.FC<{ post: IPost }> = ({ post }) => {
+    const router = useRouter();
+
     return (
-        <div className="rounded border-2 border-neutral-200 p-3.5">
+        <div
+            className="rounded-lg border-2 border-neutral-200 p-3.5"
+            onClick={(e) => {
+                e.stopPropagation();
+                void router.push(`/post/${post.id}`);
+            }}
+        >
             <div className="mb-2 flex items-center">
                 <div
                     className={classNames(
