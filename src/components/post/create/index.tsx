@@ -12,11 +12,16 @@ import { PreviewPost } from "../index";
 type FileAndAttachment = { file: File; attachment: AttachmentType };
 
 interface ICreatePostProps {
+    inReplyToId?: string;
     reblogId?: string;
     onPost: () => void;
 }
 
-const CreatePost: React.FC<ICreatePostProps> = ({ reblogId, onPost }) => {
+const CreatePost: React.FC<ICreatePostProps> = ({
+    inReplyToId,
+    reblogId,
+    onPost,
+}) => {
     const { profile } = useProfile();
 
     const utils = api.useContext();
@@ -138,6 +143,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({ reblogId, onPost }) => {
 
         if (profile.data) {
             post.mutate({
+                inReplyToId,
                 reblogId,
                 profileId: profile.data.id,
                 content,
