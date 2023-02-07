@@ -309,7 +309,7 @@ const Post: React.FC<{
 
 const PreviewPost: React.FC<{ post: IPost }> = ({ post }) => {
     return (
-        <div className="border-neutral-2 rounded border-2 p-3.5">
+        <div className="rounded border-2 border-neutral-200 p-3.5">
             <div className="mb-2 flex items-center">
                 <div
                     className={classNames(
