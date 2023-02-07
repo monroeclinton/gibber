@@ -310,7 +310,7 @@ const Post: React.FC<{
 const PreviewPost: React.FC<{ post: IPost }> = ({ post }) => {
     return (
         <div className="border-neutral-2 rounded border-2 p-3.5">
-            <div className="flex">
+            <div className="mb-2 flex items-center">
                 <div
                     className={classNames(
                         "h-[30px] w-[30px] overflow-hidden rounded-full",
@@ -331,10 +331,11 @@ const PreviewPost: React.FC<{ post: IPost }> = ({ post }) => {
                         />
                     )}
                 </div>
-                <div className="ml-3.5 flex flex-col justify-center text-sm">
-                    <p>{post.profile.username}</p>
-                    <p>{post.createdAt.toLocaleDateString()}</p>
-                </div>
+                <p className="ml-3.5">{post.profile.username}</p>
+                <p className="mx-2 text-neutral-600">·</p>
+                <p className="text-sm text-neutral-600">
+                    {post.createdAt.toLocaleDateString()}
+                </p>
             </div>
 
             {post.content && (
