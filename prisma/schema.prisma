@@ -18,6 +18,9 @@ model Post {
     id             String        @id @default(cuid())
     profileId      String
     profile        Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    inReplyToId    String?
+    inReplyTo      Post?         @relation(name: "ReplyPost", fields: [inReplyToId], references: [id])
+    replies        Post[]        @relation(name: "ReplyPost")
     reblogId       String?
     reblog         Post?         @relation(name: "ReblogPost", fields: [reblogId], references: [id])
     reblogs        Post[]        @relation(name: "ReblogPost")
