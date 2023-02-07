@@ -337,10 +337,14 @@ const PreviewPost: React.FC<{ post: IPost }> = ({ post }) => {
                     {post.createdAt.toLocaleDateString()}
                 </p>
             </div>
-
             {post.content && (
-                <div className="mt-3.5">
+                <div className="mt-2">
                     <p>{post.content}</p>
+                </div>
+            )}
+            {post.attachments.length > 0 && (
+                <div className="mt-2 h-[250px]">
+                    <Attachments attachments={post.attachments} />
                 </div>
             )}
         </div>
