@@ -136,12 +136,36 @@ export const postRouter = createTRPCRouter({
             });
         }),
     getByProfileId: publicProcedure
-        .input(z.object({ profileId: z.string() }))
+        .input(
+            z.object({
+                filter: z.optional(
+                    z.literal("with-replies").or(z.literal("media"))
+                ),
+                profileId: z.string(),
+            })
+        )
         .query(async ({ ctx, input }) => {
+            let filter: { inReplyToId?: null; attachments?: { some: object } } =
+                {
+                    inReplyToId: null,
+                };
+
+            if (input.filter === "with-replies") {
+                filter = {};
+            }
+
+            if (input.filter === "media") {
+                filter = {
+                    attachments: {
+                        some: {},
+                    },
+                };
+            }
+
             // TODO: Filter on account
             const posts = await ctx.prisma.post.findMany({
                 where: {
-                    inReplyToId: null,
+                    ...filter,
                     profileId: input.profileId,
                 },
                 orderBy: [
