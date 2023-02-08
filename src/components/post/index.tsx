@@ -12,6 +12,7 @@ import type { Prisma, Profile } from "@prisma/client";
 import classNames from "classnames";
 import { useAtom } from "jotai";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -204,28 +205,35 @@ const Post: React.FC<{
                 </div>
             )}
             <div className="flex">
-                <div
-                    className={classNames(
-                        "h-[50px] w-[50px] overflow-hidden rounded-full",
-                        {
-                            "bg-neutral-200": !post.profile.avatar,
-                        }
-                    )}
-                >
-                    {!post.profile.avatar && (
-                        <UserIcon className="m-[25%] w-1/2 text-neutral-400" />
-                    )}
-                    {post.profile.avatar && (
-                        <Image
-                            alt="Person's avatar"
-                            src={post.profile.avatar.url}
-                            width={50}
-                            height={50}
-                        />
-                    )}
-                </div>
+                <Link href={`/${post.profile.username}`}>
+                    <div
+                        className={classNames(
+                            "h-[50px] w-[50px] overflow-hidden rounded-full",
+                            {
+                                "bg-neutral-200": !post.profile.avatar,
+                            }
+                        )}
+                    >
+                        {!post.profile.avatar && (
+                            <UserIcon className="m-[25%] w-1/2 text-neutral-400" />
+                        )}
+                        {post.profile.avatar && (
+                            <Image
+                                alt="Person's avatar"
+                                src={post.profile.avatar.url}
+                                width={50}
+                                height={50}
+                            />
+                        )}
+                    </div>
+                </Link>
                 <div className="ml-3.5 flex flex-col justify-center">
-                    <p>{post.profile.username}</p>
+                    <Link
+                        className="hover:underline"
+                        href={`/${post.profile.username}`}
+                    >
+                        {post.profile.username}
+                    </Link>
                     <p className="text-sm">
                         {post.createdAt.toLocaleDateString()}
                     </p>
