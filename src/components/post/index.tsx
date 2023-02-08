@@ -209,7 +209,10 @@ const Post: React.FC<{
                 </div>
             )}
             <div className="flex">
-                <Link href={`/${post.profile.username}`}>
+                <Link
+                    href={`/${post.profile.username}`}
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <div
                         className={classNames(
                             "h-[50px] w-[50px] overflow-hidden rounded-full",
@@ -235,6 +238,7 @@ const Post: React.FC<{
                     <Link
                         className="hover:underline"
                         href={`/${post.profile.username}`}
+                        onClick={(e) => e.stopPropagation()}
                     >
                         {post.profile.username}
                     </Link>
