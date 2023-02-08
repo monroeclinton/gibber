@@ -11,7 +11,6 @@ import { profileManagerAtom } from "../atoms";
 import Button from "../components/button";
 import NavButton from "../components/button/NavButton";
 import Post from "../components/post";
-import CreatePost from "../components/post/create";
 import { api } from "../utils/api";
 import { getProfileId } from "../utils/use-profile";
 
@@ -256,8 +255,6 @@ const Profile: NextPage = () => {
                             </p>
                         </div>
                     </div>
-                    {sessionStatus === "authenticated" &&
-                        profile.data.id === profileId && <CreatePost />}
                     {posts.data &&
                         posts.data.map((post) => (
                             <Post post={post} key={post.id} />
