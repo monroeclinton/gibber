@@ -67,7 +67,7 @@ const Mask: React.FC<{ state: string; onClose?: () => void }> = ({
     state,
     onClose,
 }) => {
-    const className = classNames(defaultClassName, "bg-black", {
+    const className = classNames(defaultClassName, "bg-black z-10", {
         "opacity-0": [ENTERING, EXITING].includes(state),
         "opacity-40": ENTERED === state,
     });
@@ -81,7 +81,7 @@ const Content: React.FC<{
 }> = ({ state, children }) => {
     const className = classNames(
         defaultClassName,
-        "w-full max-w-[615px] bg-white mt-[65px] rounded-t-3xl px-6 pt-8",
+        "w-full max-w-[615px] bg-white mt-[65px] rounded-t-3xl px-6 pt-8 z-10",
         {
             "translate-y-full": [ENTERING, EXITING].includes(state),
             "translate-y-0": state === ENTERED,
