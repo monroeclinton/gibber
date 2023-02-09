@@ -195,6 +195,48 @@ export const profileRouter = createTRPCRouter({
 
             return follow;
         }),
+    following: publicProcedure
+        .input(
+            z.object({
+                profileId: z.string(),
+            })
+        )
+        .query(({ ctx, input }) => {
+            return ctx.prisma.follow.findMany({
+                where: {
+                    followerId: input.profileId,
+                },
+                include: {
+                    followed: {
+                        include: {
+                            header: true,
+                            avatar: true,
+                        },
+                    },
+                },
+            });
+        }),
+    followers: publicProcedure
+        .input(
+            z.object({
+                profileId: z.string(),
+            })
+        )
+        .query(({ ctx, input }) => {
+            return ctx.prisma.follow.findMany({
+                where: {
+                    followedId: input.profileId,
+                },
+                include: {
+                    follower: {
+                        include: {
+                            header: true,
+                            avatar: true,
+                        },
+                    },
+                },
+            });
+        }),
     upsert: protectedProcedure
         .input(
             z.object({
