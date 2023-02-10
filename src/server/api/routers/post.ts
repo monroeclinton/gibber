@@ -284,6 +284,82 @@ export const postRouter = createTRPCRouter({
                 return { isReblogged, isFavorited, ...post, ...reblog };
             });
         }),
+    search: publicProcedure
+        .input(
+            z.object({
+                profileId: z.string(),
+                content: z.string(),
+                username: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            let filter: {
+                content?: { contains: string };
+                profile?: { username: string };
+            } = {};
+
+            if (input.content.length > 0) {
+                filter = {
+                    content: {
+                        contains: input.content,
+                    },
+                };
+            }
+
+            if (input.username.length > 0) {
+                filter = {
+                    ...filter,
+                    profile: {
+                        username: input.username,
+                    },
+                };
+            }
+
+            const posts = await ctx.prisma.post.findMany({
+                where: filter,
+                include: postInclude,
+            });
+
+            const reblogs = await ctx.prisma.post.findMany({
+                where: {
+                    profileId: input.profileId,
+                    content: null,
+                    NOT: {
+                        reblogId: null,
+                    },
+                },
+            });
+
+            const favorites = await ctx.prisma.favorite.findMany({
+                where: {
+                    profileId: input.profileId,
+                },
+            });
+
+            const reblogIds = reblogs.map((reblog) => reblog.reblogId);
+            const favoriteIds = favorites.map((favorite) => favorite.postId);
+
+            return posts.map((post) => {
+                let reblog = {};
+                if (post.reblog) {
+                    const isReblogged = reblogIds.includes(post.reblog.id);
+                    const isFavorited = favoriteIds.includes(post.reblog.id);
+
+                    reblog = {
+                        reblog: {
+                            isReblogged,
+                            isFavorited,
+                            ...post.reblog,
+                        },
+                    };
+                }
+
+                const isReblogged = reblogIds.includes(post.id);
+                const isFavorited = favoriteIds.includes(post.id);
+
+                return { isReblogged, isFavorited, ...post, ...reblog };
+            });
+        }),
     create: protectedProcedure
         .input(
             z
