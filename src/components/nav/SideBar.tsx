@@ -45,39 +45,6 @@ interface ISidebarItem {
     auth: boolean;
 }
 
-const sidebarItems: ISidebarItem[] = [
-    {
-        url: "/",
-        text: "Home",
-        icon: HomeIcon,
-        auth: false,
-    },
-    {
-        url: "/search",
-        text: "Search",
-        icon: MagnifyingGlassIcon,
-        auth: false,
-    },
-    {
-        url: "/notifications",
-        text: "Notifications",
-        icon: BellIcon,
-        auth: true,
-    },
-    {
-        url: "/profile",
-        text: "Profile",
-        icon: UserIcon,
-        auth: true,
-    },
-    {
-        url: "/settings",
-        text: "Settings",
-        icon: Cog6ToothIcon,
-        auth: true,
-    },
-];
-
 const SideBar: React.FC = () => {
     const router = useRouter();
 
@@ -118,6 +85,7 @@ const Mask: React.FC<{ state: string }> = ({ state }) => {
 };
 
 const Content: React.FC<{ state: string }> = ({ state }) => {
+    const { profile } = useProfile();
     const router = useRouter();
     const { status: sessionStatus } = useSession();
     const [, setNavOpen] = useAtom(navOpenAtom);
@@ -130,6 +98,39 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
             "translate-x-0": state === ENTERED,
         }
     );
+
+    const sidebarItems: ISidebarItem[] = [
+        {
+            url: "/",
+            text: "Home",
+            icon: HomeIcon,
+            auth: false,
+        },
+        {
+            url: "/search",
+            text: "Search",
+            icon: MagnifyingGlassIcon,
+            auth: false,
+        },
+        {
+            url: "/notifications",
+            text: "Notifications",
+            icon: BellIcon,
+            auth: true,
+        },
+        {
+            url: "/" + (profile.data ? profile.data.username : ""),
+            text: "Profile",
+            icon: UserIcon,
+            auth: true,
+        },
+        {
+            url: "/settings",
+            text: "Settings",
+            icon: Cog6ToothIcon,
+            auth: true,
+        },
+    ];
 
     const activeItems = sidebarItems.filter(
         (item) => !item.auth || sessionStatus === "authenticated"
