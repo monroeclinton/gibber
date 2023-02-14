@@ -1,19 +1,23 @@
-import { type NextPage } from "next";
 import Head from "next/head";
+import { signOut } from "next-auth/react";
 import { useState } from "react";
 
 import Button from "../components/button";
 import NavButton from "../components/button/NavButton";
 import Modal from "../components/modal";
 import TopBar from "../components/nav/TopBar";
+import { type GibberPage } from "../types/next";
 import { api } from "../utils/api";
 import { clearProfileId } from "../utils/use-profile";
 
-const Settings: NextPage = () => {
+const Settings: GibberPage = () => {
     const [isDeleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
 
     const userDelete = api.user.delete.useMutation({
-        onSuccess: () => clearProfileId(),
+        onSuccess: () => {
+            clearProfileId();
+            void signOut();
+        },
     });
 
     return (
@@ -66,5 +70,7 @@ const Settings: NextPage = () => {
         </>
     );
 };
+
+Settings.authRequired = true;
 
 export default Settings;
