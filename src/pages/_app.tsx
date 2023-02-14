@@ -1,23 +1,29 @@
 import "../styles/globals.css";
 
 import { Provider } from "jotai";
-import { type AppType } from "next/app";
-import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 
+import AuthGuard from "../components/auth/AuthGuard";
 import ProfileManager from "../components/auth/ProfileManager";
 import SideBar from "../components/nav/SideBar";
 import CreateModal from "../components/post/create/CreateModal";
+import { type GibberAppProps } from "../types/next";
 import { api } from "../utils/api";
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: React.FC<GibberAppProps> = ({
     Component,
     pageProps: { session, ...pageProps },
 }) => {
     return (
         <SessionProvider session={session}>
             <Provider>
-                <Component {...pageProps} />
+                {Component.authRequired ? (
+                    <AuthGuard>
+                        <Component {...pageProps} />
+                    </AuthGuard>
+                ) : (
+                    <Component {...pageProps} />
+                )}
                 <SideBar />
                 <ProfileManager />
                 <CreateModal />
