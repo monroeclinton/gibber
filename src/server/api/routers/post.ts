@@ -5,6 +5,7 @@ import {
     PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import probe from "probe-image-size";
 import type { Readable } from "stream";
@@ -12,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
 import { env } from "../../../env/server.mjs";
+import { prisma } from "../../db";
 import { s3Client, s3Server } from "../../s3";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -36,9 +38,98 @@ const postInclude = {
     },
 };
 
+type Post = Prisma.PostGetPayload<{
+    include: {
+        profile: {
+            include: {
+                avatar: true;
+            };
+        };
+        attachments: {
+            include: {
+                file: true;
+            };
+        };
+        reblog: {
+            include: {
+                profile: {
+                    include: {
+                        avatar: true;
+                    };
+                };
+                attachments: {
+                    include: {
+                        file: true;
+                    };
+                };
+            };
+        };
+    };
+}>;
+
+type WithInteractions<T> = T & {
+    isReblogged: boolean;
+    isFavorited: boolean;
+    reblog:
+        | null
+        | (T & {
+              isReblogged: boolean;
+              isFavorited: boolean;
+          });
+};
+
+const computeInteractions = async (
+    posts: Post[],
+    profileId?: string
+): Promise<WithInteractions<Post>[]> => {
+    const reblogs = await prisma.post.findMany({
+        where: {
+            profileId,
+            content: null,
+            NOT: {
+                reblogId: null,
+            },
+        },
+    });
+
+    const favorites = await prisma.favorite.findMany({
+        where: {
+            profileId,
+        },
+    });
+
+    const reblogIds = reblogs.map((reblog) => reblog.reblogId);
+    const favoriteIds = favorites.map((favorite) => favorite.postId);
+
+    return posts.map((post: Post): WithInteractions<Post> => {
+        let reblog: { reblog: null | WithInteractions<Post> } = {
+            reblog: null,
+        };
+
+        if (post.reblog) {
+            const isReblogged = reblogIds.includes(post.reblog.id);
+            const isFavorited = favoriteIds.includes(post.reblog.id);
+
+            reblog = {
+                reblog: {
+                    isReblogged,
+                    isFavorited,
+                    reblog: null,
+                    ...post.reblog,
+                },
+            };
+        }
+
+        const isReblogged = reblogIds.includes(post.id);
+        const isFavorited = favoriteIds.includes(post.id);
+
+        return { isReblogged, isFavorited, ...post, ...reblog };
+    });
+};
+
 export const postRouter = createTRPCRouter({
     getById: publicProcedure
-        .input(z.object({ id: z.string() }))
+        .input(z.object({ id: z.string(), profileId: z.string() }))
         .query(async ({ ctx, input }) => {
             const post = await ctx.prisma.post.findUniqueOrThrow({
                 where: {
@@ -47,46 +138,10 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            const reblogs = await ctx.prisma.post.findMany({
-                where: {
-                    id: input.id,
-                    content: null,
-                    NOT: {
-                        reblogId: null,
-                    },
-                },
-            });
-
-            const favorites = await ctx.prisma.favorite.findMany({
-                where: {
-                    id: input.id,
-                },
-            });
-
-            const reblogIds = reblogs.map((reblog) => reblog.reblogId);
-            const favoriteIds = favorites.map((favorite) => favorite.postId);
-
-            let reblog = {};
-            if (post.reblog) {
-                const isReblogged = reblogIds.includes(post.reblog.id);
-                const isFavorited = favoriteIds.includes(post.reblog.id);
-
-                reblog = {
-                    reblog: {
-                        isReblogged,
-                        isFavorited,
-                        ...post.reblog,
-                    },
-                };
-            }
-
-            const isReblogged = reblogIds.includes(post.id);
-            const isFavorited = favoriteIds.includes(post.id);
-
-            return { isReblogged, isFavorited, ...post, ...reblog };
+            return await computeInteractions([post], input.profileId);
         }),
     getRepliesById: publicProcedure
-        .input(z.object({ id: z.string() }))
+        .input(z.object({ id: z.string(), profileId: z.string() }))
         .query(async ({ ctx, input }) => {
             const replies = await ctx.prisma.post.findMany({
                 where: {
@@ -95,45 +150,7 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            const reblogs = await ctx.prisma.post.findMany({
-                where: {
-                    id: input.id,
-                    content: null,
-                    NOT: {
-                        reblogId: null,
-                    },
-                },
-            });
-
-            const favorites = await ctx.prisma.favorite.findMany({
-                where: {
-                    id: input.id,
-                },
-            });
-
-            const reblogIds = reblogs.map((reblog) => reblog.reblogId);
-            const favoriteIds = favorites.map((favorite) => favorite.postId);
-
-            return replies.map((post) => {
-                let reblog = {};
-                if (post.reblog) {
-                    const isReblogged = reblogIds.includes(post.reblog.id);
-                    const isFavorited = favoriteIds.includes(post.reblog.id);
-
-                    reblog = {
-                        reblog: {
-                            isReblogged,
-                            isFavorited,
-                            ...post.reblog,
-                        },
-                    };
-                }
-
-                const isReblogged = reblogIds.includes(post.id);
-                const isFavorited = favoriteIds.includes(post.id);
-
-                return { isReblogged, isFavorited, ...post, ...reblog };
-            });
+            return await computeInteractions(replies, input.profileId);
         }),
     getByProfileId: publicProcedure
         .input(
@@ -176,45 +193,7 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            const reblogs = await ctx.prisma.post.findMany({
-                where: {
-                    profileId: input.profileId,
-                    content: null,
-                    NOT: {
-                        reblogId: null,
-                    },
-                },
-            });
-
-            const favorites = await ctx.prisma.favorite.findMany({
-                where: {
-                    profileId: input.profileId,
-                },
-            });
-
-            const reblogIds = reblogs.map((reblog) => reblog.reblogId);
-            const favoriteIds = favorites.map((favorite) => favorite.postId);
-
-            return posts.map((post) => {
-                let reblog = {};
-                if (post.reblog) {
-                    const isReblogged = reblogIds.includes(post.reblog.id);
-                    const isFavorited = favoriteIds.includes(post.reblog.id);
-
-                    reblog = {
-                        reblog: {
-                            isReblogged,
-                            isFavorited,
-                            ...post.reblog,
-                        },
-                    };
-                }
-
-                const isReblogged = reblogIds.includes(post.id);
-                const isFavorited = favoriteIds.includes(post.id);
-
-                return { isReblogged, isFavorited, ...post, ...reblog };
-            });
+            return await computeInteractions(posts, input.profileId);
         }),
     getFeedByProfileId: publicProcedure
         .input(z.object({ profileId: z.string() }))
@@ -244,45 +223,7 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            const reblogs = await ctx.prisma.post.findMany({
-                where: {
-                    profileId: input.profileId,
-                    content: null,
-                    NOT: {
-                        reblogId: null,
-                    },
-                },
-            });
-
-            const favorites = await ctx.prisma.favorite.findMany({
-                where: {
-                    profileId: input.profileId,
-                },
-            });
-
-            const reblogIds = reblogs.map((reblog) => reblog.reblogId);
-            const favoriteIds = favorites.map((favorite) => favorite.postId);
-
-            return posts.map((post) => {
-                let reblog = {};
-                if (post.reblog) {
-                    const isReblogged = reblogIds.includes(post.reblog.id);
-                    const isFavorited = favoriteIds.includes(post.reblog.id);
-
-                    reblog = {
-                        reblog: {
-                            isReblogged,
-                            isFavorited,
-                            ...post.reblog,
-                        },
-                    };
-                }
-
-                const isReblogged = reblogIds.includes(post.id);
-                const isFavorited = favoriteIds.includes(post.id);
-
-                return { isReblogged, isFavorited, ...post, ...reblog };
-            });
+            return await computeInteractions(posts, input.profileId);
         }),
     search: publicProcedure
         .input(
@@ -320,45 +261,7 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            const reblogs = await ctx.prisma.post.findMany({
-                where: {
-                    profileId: input.profileId,
-                    content: null,
-                    NOT: {
-                        reblogId: null,
-                    },
-                },
-            });
-
-            const favorites = await ctx.prisma.favorite.findMany({
-                where: {
-                    profileId: input.profileId,
-                },
-            });
-
-            const reblogIds = reblogs.map((reblog) => reblog.reblogId);
-            const favoriteIds = favorites.map((favorite) => favorite.postId);
-
-            return posts.map((post) => {
-                let reblog = {};
-                if (post.reblog) {
-                    const isReblogged = reblogIds.includes(post.reblog.id);
-                    const isFavorited = favoriteIds.includes(post.reblog.id);
-
-                    reblog = {
-                        reblog: {
-                            isReblogged,
-                            isFavorited,
-                            ...post.reblog,
-                        },
-                    };
-                }
-
-                const isReblogged = reblogIds.includes(post.id);
-                const isFavorited = favoriteIds.includes(post.id);
-
-                return { isReblogged, isFavorited, ...post, ...reblog };
-            });
+            return await computeInteractions(posts, input.profileId);
         }),
     create: protectedProcedure
         .input(
