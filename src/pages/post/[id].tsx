@@ -1,4 +1,5 @@
 import { type NextPage } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 
 import NavButton from "../../components/button/NavButton";
@@ -35,6 +36,10 @@ const PostPage: NextPage = () => {
 
     return (
         <>
+            <Head>
+                <title>Post</title>
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
             {post.isLoading && (
                 <div className="flex h-screen items-center justify-center">
                     <svg
