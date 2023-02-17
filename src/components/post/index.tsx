@@ -169,7 +169,9 @@ const Post: React.FC<{
         setReblogPost(post.id);
     };
 
-    const onFavorite = () => {
+    const onFavorite = (e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
+
         if (!profileId) {
             return;
         }
