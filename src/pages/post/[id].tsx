@@ -7,13 +7,16 @@ import TopBar from "../../components/nav/TopBar";
 import Post from "../../components/post";
 import CreatePost from "../../components/post/create";
 import { api } from "../../utils/api";
+import { getProfileId } from "../../utils/use-profile";
 
 const PostPage: NextPage = () => {
     const router = useRouter();
+    const profileId = getProfileId();
 
     const post = api.post.getById.useQuery(
         {
             id: router.query.id as string,
+            profileId: profileId as string,
         },
         {
             enabled: !!router.isReady,
@@ -23,6 +26,7 @@ const PostPage: NextPage = () => {
     const replies = api.post.getRepliesById.useQuery(
         {
             id: router.query.id as string,
+            profileId: profileId as string,
         },
         {
             enabled: !!router.isReady,
