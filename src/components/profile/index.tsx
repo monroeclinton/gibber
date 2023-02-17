@@ -51,7 +51,8 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
 
     const posts = api.post.getByProfileId.useQuery(
         {
-            profileId: profile.data?.id as string,
+            profileId,
+            id: profile.data?.id as string,
             filter: postFilter,
         },
         {
