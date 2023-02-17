@@ -30,6 +30,7 @@ model Post {
     reblogsCount   Int           @default(0)
     favoritesCount Int           @default(0)
     favorites      Favorite[]
+    notifications  Notification[]
     createdAt      DateTime      @default(now())
     updatedAt      DateTime      @updatedAt
 }
@@ -79,25 +80,40 @@ model Follow {
     @@unique([followedId, followerId])
 }
 
+model Notification {
+    id          String    @id @default(cuid())
+    postId      String
+    post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    notifiedId  String
+    notified    Profile   @relation(name: "NotifiedNotification", fields: [notifiedId], references: [id], onDelete: Cascade)
+    notifierId  String
+    notifier    Profile   @relation(name: "NotifierNotification", fields: [notifierId], references: [id], onDelete: Cascade)
+    type        String
+    read        Boolean   @default(false)
+    createdAt   DateTime  @default(now())
+}
+
 model Profile {
-    id                String    @id @default(cuid())
+    id                String          @id @default(cuid())
     posts             Post[]
+    notified          Notification[]  @relation(name: "NotifiedNotification")
+    notifier          Notification[]  @relation(name: "NotifierNotification")
     userId            String
-    user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
     headerId          String?
-    header            File?     @relation(name: "HeaderFile", fields: [headerId], references: [id], onDelete: Cascade)
+    header            File?           @relation(name: "HeaderFile", fields: [headerId], references: [id], onDelete: Cascade)
     avatarId          String?
-    avatar            File?     @relation(name: "AvatarFile", fields: [avatarId], references: [id], onDelete: Cascade)
+    avatar            File?           @relation(name: "AvatarFile", fields: [avatarId], references: [id], onDelete: Cascade)
     name              String
-    username          String    @unique
+    username          String          @unique
     summary           String?
-    followingCount    Int       @default(0)
-    followersCount    Int       @default(0)
-    following         Follow[]  @relation(name: "FollowerProfile")
-    followers         Follow[]  @relation(name: "FollowedProfile")
+    followingCount    Int             @default(0)
+    followersCount    Int             @default(0)
+    following         Follow[]        @relation(name: "FollowerProfile")
+    followers         Follow[]        @relation(name: "FollowedProfile")
     favorites         Favorite[]
-    createdAt         DateTime  @default(now())
-    updatedAt         DateTime  @updatedAt
+    createdAt         DateTime        @default(now())
+    updatedAt         DateTime        @updatedAt
 }
 
 // Necessary for Next auth
