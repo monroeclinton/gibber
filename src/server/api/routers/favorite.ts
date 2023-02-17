@@ -33,9 +33,18 @@ export const favoriteRouter = createTRPCRouter({
                 data: input,
             });
 
-            await ctx.prisma.post.update({
+            const post = await ctx.prisma.post.update({
                 where: { id: input.postId },
                 data: { favoritesCount: { increment: 1 } },
+            });
+
+            await ctx.prisma.notification.create({
+                data: {
+                    postId: input.postId,
+                    notifierId: input.profileId,
+                    notifiedId: post.profileId,
+                    type: "FAVORITE",
+                },
             });
 
             return favorite;
