@@ -1,4 +1,5 @@
 import { favoriteRouter } from "./routers/favorite";
+import { notificationRouter } from "./routers/notification";
 import { postRouter } from "./routers/post";
 import { profileRouter } from "./routers/profile";
 import { reblogRouter } from "./routers/reblog";
@@ -12,6 +13,7 @@ import { createTRPCRouter } from "./trpc";
  */
 export const appRouter = createTRPCRouter({
     favorite: favoriteRouter,
+    notification: notificationRouter,
     post: postRouter,
     profile: profileRouter,
     reblog: reblogRouter,
