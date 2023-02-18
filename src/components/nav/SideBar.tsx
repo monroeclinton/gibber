@@ -146,7 +146,7 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
                 }
             )}
             href={item.url}
-            key={item.url + item.text}
+            key={"side-bar" + item.url + item.text}
         >
             <p className="mr-6 text-xl">{item.text}</p>
             <item.icon width={30} height={30} />

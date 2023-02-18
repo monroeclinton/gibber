@@ -66,18 +66,22 @@ const AuthedBottomBar = () => {
     const items = [
         {
             url: "/",
+            text: "Home",
             icon: HomeIcon,
         },
         {
             url: "/search",
+            text: "Search",
             icon: MagnifyingGlassIcon,
         },
         {
             url: "/notifications",
+            text: "Notifications",
             icon: BellIcon,
         },
         {
             url: "/" + (profile.data ? profile.data.username : ""),
+            text: "Profile",
             icon: UserCircleIcon,
         },
     ];
@@ -88,7 +92,7 @@ const AuthedBottomBar = () => {
                 "text-red-700": item.url === router.asPath,
             })}
             href={item.url}
-            key={item.url}
+            key={"bottom-bar-" + item.url + item.text}
         >
             <item.icon width={30} height={30} />
         </Link>
