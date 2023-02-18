@@ -93,7 +93,7 @@ const Content: React.FC<{ state: string }> = ({ state }) => {
 
     const className = classNames(
         defaultClassName,
-        "w-full max-w-[380px] bg-white z-10",
+        "w-full max-w-[320px] bg-white z-10",
         {
             "-translate-x-full skew-y-6": [ENTERING, EXITING].includes(state),
             "translate-x-0": state === ENTERED,
