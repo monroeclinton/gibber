@@ -14,7 +14,7 @@ import CloseButton from "../button/CloseButton";
 // literal values are not allowed.
 const duration = 125;
 const defaultClassName = `
-    absolute top-0 bottom-0 left-0 right-0
+    fixed top-0 bottom-0 left-0 right-0
     duration-[125ms] ease-[cubic-bezier(0.5, 0.25, 0, 1)] transition-all
 `;
 
