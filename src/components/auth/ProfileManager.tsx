@@ -2,7 +2,7 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import type { File as GibberFile } from "@prisma/client";
 import { useAtom } from "jotai";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -48,7 +48,7 @@ const ProfileManager: React.FC = () => {
                     <ProfileForm />
                 )}
                 <hr className="my-6 h-px border-0 bg-neutral-200" />
-                <div className="mt-6 flex">
+                <div className="mt-6 flex gap-2">
                     <Button
                         className="grow"
                         color="secondary"
@@ -64,6 +64,15 @@ const ProfileManager: React.FC = () => {
                             ? "New Profile"
                             : "Select Profile"}
                     </Button>
+                    {profileManager === "select" && (
+                        <Button
+                            className="grow"
+                            color="secondary"
+                            onClick={() => void signOut()}
+                        >
+                            Sign Out
+                        </Button>
+                    )}
                 </div>
             </>
         </Modal>

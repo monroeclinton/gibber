@@ -1,5 +1,6 @@
 import {
     BellIcon,
+    ChevronUpDownIcon,
     Cog6ToothIcon,
     HomeIcon,
     MagnifyingGlassIcon,
@@ -11,7 +12,7 @@ import { useAtom } from "jotai";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
 import { Transition } from "react-transition-group";
 import {
@@ -210,39 +211,29 @@ const AuthCard: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col items-end">
-            {profile.data?.avatar && (
-                <Image
-                    className="rounded-full"
-                    alt="Your avatar"
-                    src={profile.data.avatar.url}
-                    width={75}
-                    height={75}
-                />
-            )}
-            {!profile.data?.avatar && (
-                <div className="h-[75px] w-[75px] rounded-full bg-neutral-200">
-                    <SolidUserIcon className="m-[25%] w-1/2 text-neutral-400" />
-                </div>
-            )}
-            <p className="mt-2 text-lg">{profile.data?.username}</p>
-            <div className="mt-3 flex">
-                <Button
-                    color="secondary"
-                    onClick={() => clearProfileId()}
-                    className="mr-3.5"
-                >
-                    Switch Profile
-                </Button>
-                <Button
-                    color="primary-outline"
-                    onClick={() => {
-                        clearProfileId();
-                        void signOut();
-                    }}
-                >
-                    Sign Out
-                </Button>
+        <div
+            className="flex items-center justify-between rounded bg-gradient-to-r py-2 hover:cursor-pointer hover:from-neutral-100"
+            onClick={() => clearProfileId()}
+        >
+            <div className="flex">
+                <ChevronUpDownIcon width={30} height={30} />
+            </div>
+            <div className="flex flex-col items-end">
+                {profile.data?.avatar && (
+                    <Image
+                        className="rounded-full"
+                        alt="Your avatar"
+                        src={profile.data.avatar.url}
+                        width={75}
+                        height={75}
+                    />
+                )}
+                {!profile.data?.avatar && (
+                    <div className="h-[75px] w-[75px] rounded-full bg-neutral-200">
+                        <SolidUserIcon className="m-[25%] w-1/2 text-neutral-400" />
+                    </div>
+                )}
+                <p className="mt-2 text-lg">{profile.data?.username}</p>
             </div>
         </div>
     );
