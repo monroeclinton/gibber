@@ -29,7 +29,7 @@ const Button: React.FC<IButtonProps> = ({
             "active:ring-red-100/75":
                 transparent && color.startsWith("primary"),
             "disabled:bg-red-400": color === "primary",
-            "hover:bg-neutral-100 text-red-500 border-2 border-red-500":
+            "hover:bg-neutral-100 text-red-500 border-2 border-red-500 bg-white":
                 color === "primary-outline",
         },
         {
