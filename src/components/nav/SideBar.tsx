@@ -226,7 +226,7 @@ const AuthCard: React.FC = () => {
                 </div>
             )}
             <p className="mt-2 text-lg">{profile.data?.username}</p>
-            <div className="mt-3">
+            <div className="mt-3 flex">
                 <Button
                     color="secondary"
                     onClick={() => clearProfileId()}
