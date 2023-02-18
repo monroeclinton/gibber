@@ -53,7 +53,7 @@ const BottomBar: React.FC = () => {
     ));
 
     return (
-        <div className="absolute left-6 right-6 bottom-4 left-1/2 w-[327px] -translate-x-1/2">
+        <div className="fixed left-6 right-6 bottom-4 left-1/2 w-[330px] -translate-x-1/2">
             <div className="absolute top-1/2 flex w-full -translate-y-1/2 justify-between px-4">
                 {links}
             </div>
