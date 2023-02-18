@@ -21,7 +21,7 @@ const Button: React.FC<IButtonProps> = ({
 
     const className = classNames(
         props.className,
-        "shadow-inner focus:outline-none transition-colors font-semibold box-border",
+        "shadow-inner focus:outline-none transition-colors font-semibold box-border flex items-center justify-center",
         {
             "bg-red-500 hover:bg-red-600 text-white shadow-red-400":
                 color === "primary",
