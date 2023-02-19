@@ -9,7 +9,7 @@ import { PreviewPost } from "../components/post";
 import type { GibberPage } from "../types/next";
 import { api } from "../utils/api";
 
-const Notification: GibberPage = () => {
+const Notifications: GibberPage = () => {
     const notifications = api.notification.get.useQuery();
 
     return (
@@ -67,6 +67,6 @@ const Notification: GibberPage = () => {
     );
 };
 
-Notification.authRequired = true;
+Notifications.authRequired = true;
 
-export default Notification;
+export default Notifications;
