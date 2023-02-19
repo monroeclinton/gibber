@@ -1,7 +1,8 @@
 import { type GetServerSidePropsContext } from "next";
-import { unstable_getServerSession } from "next-auth";
+import { type Session, unstable_getServerSession } from "next-auth";
 
 import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { prisma } from "./db";
 
 /**
  * Wrapper for unstable_getServerSession, used in trpc createContext and the
@@ -18,4 +19,17 @@ export const getServerAuthSession = async (ctx: {
     res: GetServerSidePropsContext["res"];
 }) => {
     return await unstable_getServerSession(ctx.req, ctx.res, authOptions);
+};
+
+export const getServerAuthProfile = async (ctx: {
+    req: GetServerSidePropsContext["req"];
+    res: GetServerSidePropsContext["res"];
+    session: Session | null;
+}) => {
+    return await prisma.profile.findFirst({
+        where: {
+            id: ctx.req.cookies.profileId,
+            userId: ctx.session?.user?.id,
+        },
+    });
 };
