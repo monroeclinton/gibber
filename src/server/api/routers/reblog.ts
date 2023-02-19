@@ -1,37 +1,20 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedureWithProfile } from "../trpc";
 
 export const reblogRouter = createTRPCRouter({
-    create: protectedProcedure
+    create: protectedProcedureWithProfile
         .input(
             z.object({
-                profileId: z.string(),
                 postId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const session = ctx.session;
-
-            const hasPermission = await ctx.prisma.profile
-                .findFirst({
-                    where: {
-                        id: input.profileId,
-                    },
-                })
-                .then((r) => r === null || r.userId === session.user.id);
-
-            if (!hasPermission) {
-                throw new TRPCError({
-                    code: "FORBIDDEN",
-                    message: "You do not have access to this profile.",
-                });
-            }
+            const profile = ctx.profile;
 
             const post = await ctx.prisma.post.create({
                 data: {
-                    profileId: input.profileId,
+                    profileId: profile?.id as string,
                     reblogId: input.postId,
                 },
             });
@@ -43,35 +26,19 @@ export const reblogRouter = createTRPCRouter({
 
             return post;
         }),
-    delete: protectedProcedure
+    delete: protectedProcedureWithProfile
         .input(
             z.object({
-                profileId: z.string(),
                 postId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const session = ctx.session;
-
-            const hasPermission = await ctx.prisma.profile
-                .findFirst({
-                    where: {
-                        id: input.profileId,
-                    },
-                })
-                .then((r) => r === null || r.userId === session.user.id);
-
-            if (!hasPermission) {
-                throw new TRPCError({
-                    code: "FORBIDDEN",
-                    message: "You do not have access to this profile.",
-                });
-            }
+            const profile = ctx.profile;
 
             const post = await ctx.prisma.post.deleteMany({
                 where: {
                     content: null,
-                    profileId: input.profileId,
+                    profileId: profile?.id as string,
                     reblogId: input.postId,
                 },
             });

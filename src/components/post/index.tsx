@@ -151,12 +151,10 @@ const Post: React.FC<{
 
         if (!post.isReblogged) {
             reblog.mutate({
-                profileId,
                 postId: post.id,
             });
         } else {
             unreblog.mutate({
-                profileId,
                 postId: post.id,
             });
         }
@@ -178,12 +176,10 @@ const Post: React.FC<{
 
         if (!post.isFavorited) {
             favorite.mutate({
-                profileId,
                 postId: post.id,
             });
         } else {
             unfavorite.mutate({
-                profileId,
                 postId: post.id,
             });
         }

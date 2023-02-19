@@ -3,7 +3,12 @@ import { z } from "zod";
 
 import { env } from "../../../env/server.mjs";
 import uploadFile from "../../../utils/upload-file";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import {
+    createTRPCRouter,
+    protectedProcedure,
+    protectedProcedureWithProfile,
+    publicProcedure,
+} from "../trpc";
 
 const profileInclude = {
     header: true,
@@ -29,7 +34,6 @@ export const profileRouter = createTRPCRouter({
     getByUsername: publicProcedure
         .input(
             z.object({
-                profileId: z.string().or(z.null()),
                 username: z.string(),
             })
         )
@@ -50,12 +54,12 @@ export const profileRouter = createTRPCRouter({
 
             let isFollowing = false;
 
-            if (input.profileId) {
+            if (ctx.profile?.id) {
                 isFollowing = await ctx.prisma.follow
                     .findFirst({
                         where: {
                             followedId: profile.id,
-                            followerId: input.profileId,
+                            followerId: ctx.profile?.id,
                         },
                     })
                     .then((r) => r !== null);
@@ -89,34 +93,18 @@ export const profileRouter = createTRPCRouter({
 
             return profile;
         }),
-    createFriendship: protectedProcedure
+    createFriendship: protectedProcedureWithProfile
         .input(
             z.object({
-                profileId: z.string(),
                 followedId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const session = ctx.session;
-
-            const profile = await ctx.prisma.profile.findFirst({
-                where: {
-                    id: input.profileId,
-                },
-            });
-
-            const hasPermission = profile && profile.userId === session.user.id;
-
-            if (!hasPermission) {
-                throw new TRPCError({
-                    code: "FORBIDDEN",
-                    message: "You do not have access to this profile.",
-                });
-            }
+            const profile = ctx.profile;
 
             const data = {
                 followedId: input.followedId,
-                followerId: input.profileId,
+                followerId: profile?.id as string,
             };
 
             const follow = await ctx.prisma.follow.findFirst({
@@ -141,34 +129,18 @@ export const profileRouter = createTRPCRouter({
 
             return follow;
         }),
-    deleteFriendship: protectedProcedure
+    deleteFriendship: protectedProcedureWithProfile
         .input(
             z.object({
-                profileId: z.string(),
                 followedId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const session = ctx.session;
-
-            const hasPermission = await ctx.prisma.profile
-                .findFirst({
-                    where: {
-                        id: input.profileId,
-                    },
-                })
-                .then((r) => r === null || r.userId === session.user.id);
-
-            if (!hasPermission) {
-                throw new TRPCError({
-                    code: "FORBIDDEN",
-                    message: "You do not have access to this profile.",
-                });
-            }
+            const profile = ctx.profile;
 
             const data = {
                 followedId: input.followedId,
-                followerId: input.profileId,
+                followerId: profile?.id as string,
             };
 
             const follow = await ctx.prisma.follow.findFirst({

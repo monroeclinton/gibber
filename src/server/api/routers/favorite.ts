@@ -1,36 +1,22 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedureWithProfile } from "../trpc";
 
 export const favoriteRouter = createTRPCRouter({
-    create: protectedProcedure
+    create: protectedProcedureWithProfile
         .input(
             z.object({
-                profileId: z.string(),
                 postId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const session = ctx.session;
-
-            const hasPermission = await ctx.prisma.profile
-                .findFirst({
-                    where: {
-                        id: input.profileId,
-                    },
-                })
-                .then((r) => r === null || r.userId === session.user.id);
-
-            if (!hasPermission) {
-                throw new TRPCError({
-                    code: "FORBIDDEN",
-                    message: "You do not have access to this profile.",
-                });
-            }
+            const profile = ctx.profile;
 
             const favorite = await ctx.prisma.favorite.create({
-                data: input,
+                data: {
+                    profileId: profile?.id as string,
+                    postId: input.postId,
+                },
             });
 
             const post = await ctx.prisma.post.update({
@@ -41,7 +27,7 @@ export const favoriteRouter = createTRPCRouter({
             await ctx.prisma.notification.create({
                 data: {
                     postId: input.postId,
-                    notifierId: input.profileId,
+                    notifierId: profile?.id as string,
                     notifiedId: post.profileId,
                     type: "FAVORITE",
                 },
@@ -49,34 +35,21 @@ export const favoriteRouter = createTRPCRouter({
 
             return favorite;
         }),
-    delete: protectedProcedure
+    delete: protectedProcedureWithProfile
         .input(
             z.object({
-                profileId: z.string(),
                 postId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const session = ctx.session;
-
-            const hasPermission = await ctx.prisma.profile
-                .findFirst({
-                    where: {
-                        id: input.profileId,
-                    },
-                })
-                .then((r) => r === null || r.userId === session.user.id);
-
-            if (!hasPermission) {
-                throw new TRPCError({
-                    code: "FORBIDDEN",
-                    message: "You do not have access to this profile.",
-                });
-            }
+            const profile = ctx.profile;
 
             const favorite = await ctx.prisma.favorite.delete({
                 where: {
-                    postId_profileId: input,
+                    postId_profileId: {
+                        profileId: profile?.id as string,
+                        postId: input.postId,
+                    },
                 },
             });
 

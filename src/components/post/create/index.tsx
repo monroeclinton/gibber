@@ -145,7 +145,6 @@ const CreatePost: React.FC<ICreatePostProps> = ({
             post.mutate({
                 inReplyToId,
                 reblogId,
-                profileId: profile.data.id,
                 content,
                 files: uploads,
             });

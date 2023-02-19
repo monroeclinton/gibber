@@ -8,19 +8,9 @@ import TopBar from "../components/nav/TopBar";
 import { PreviewPost } from "../components/post";
 import type { GibberPage } from "../types/next";
 import { api } from "../utils/api";
-import { getProfileId } from "../utils/use-profile";
 
 const Notification: GibberPage = () => {
-    const profileId = getProfileId();
-
-    const notifications = api.notification.getByProfileId.useQuery(
-        {
-            profileId: profileId as string,
-        },
-        {
-            enabled: !!profileId,
-        }
-    );
+    const notifications = api.notification.get.useQuery();
 
     return (
         <>

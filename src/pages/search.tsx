@@ -9,18 +9,14 @@ import Modal from "../components/modal";
 import TopBar from "../components/nav/TopBar";
 import Post from "../components/post";
 import { api } from "../utils/api";
-import { getProfileId } from "../utils/use-profile";
 
 const Search: NextPage = () => {
-    const profileId = getProfileId();
-
     const [content, setContent] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [isFilterModalOpen, setFilterModalOpen] = useState<boolean>(false);
 
     const posts = api.post.search.useQuery(
         {
-            profileId: profileId as string,
             content,
             username,
         },

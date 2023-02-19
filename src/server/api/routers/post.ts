@@ -15,7 +15,12 @@ import { z } from "zod";
 import { env } from "../../../env/server.mjs";
 import { prisma } from "../../db";
 import { s3Client, s3Server } from "../../s3";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import {
+    createTRPCRouter,
+    protectedProcedure,
+    protectedProcedureWithProfile,
+    publicProcedure,
+} from "../trpc";
 
 const basePostInclude = {
     profile: {
@@ -129,8 +134,10 @@ const computeInteractions = async (
 
 export const postRouter = createTRPCRouter({
     getById: publicProcedure
-        .input(z.object({ id: z.string(), profileId: z.string() }))
+        .input(z.object({ id: z.string() }))
         .query(async ({ ctx, input }) => {
+            const profile = ctx.profile;
+
             const post = await ctx.prisma.post.findUniqueOrThrow({
                 where: {
                     id: input.id,
@@ -138,11 +145,13 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            return await computeInteractions([post], input.profileId);
+            return await computeInteractions([post], profile?.id);
         }),
     getRepliesById: publicProcedure
-        .input(z.object({ id: z.string(), profileId: z.string() }))
+        .input(z.object({ id: z.string() }))
         .query(async ({ ctx, input }) => {
+            const profile = ctx.profile;
+
             const replies = await ctx.prisma.post.findMany({
                 where: {
                     inReplyToId: input.id,
@@ -150,19 +159,20 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            return await computeInteractions(replies, input.profileId);
+            return await computeInteractions(replies, profile?.id);
         }),
     getByProfileId: publicProcedure
         .input(
             z.object({
                 id: z.string(),
-                profileId: z.string(),
                 filter: z.optional(
                     z.literal("with-replies").or(z.literal("media"))
                 ),
             })
         )
         .query(async ({ ctx, input }) => {
+            const profile = ctx.profile;
+
             let filter: { inReplyToId?: null; attachments?: { some: object } } =
                 {
                     inReplyToId: null,
@@ -194,11 +204,13 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            return await computeInteractions(posts, input.profileId);
+            return await computeInteractions(posts, profile?.id);
         }),
     getFeedByProfileId: publicProcedure
         .input(z.object({ profileId: z.string() }))
         .query(async ({ ctx, input }) => {
+            const profile = ctx.profile;
+
             const follows = await ctx.prisma.follow.findMany({
                 where: {
                     followerId: input.profileId,
@@ -224,17 +236,18 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            return await computeInteractions(posts, input.profileId);
+            return await computeInteractions(posts, profile?.id);
         }),
     search: publicProcedure
         .input(
             z.object({
-                profileId: z.string(),
                 content: z.string(),
                 username: z.string(),
             })
         )
         .query(async ({ ctx, input }) => {
+            const profile = ctx.profile;
+
             let filter: {
                 content?: { contains: string };
                 profile?: { username: string };
@@ -262,13 +275,12 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            return await computeInteractions(posts, input.profileId);
+            return await computeInteractions(posts, profile?.id);
         }),
-    create: protectedProcedure
+    create: protectedProcedureWithProfile
         .input(
             z
                 .object({
-                    profileId: z.string(),
                     inReplyToId: z.string(),
                     reblogId: z.string(),
                     content: z.string(),
@@ -298,31 +310,15 @@ export const postRouter = createTRPCRouter({
         )
         .mutation(async ({ ctx, input }) => {
             return await ctx.prisma.$transaction(async (tx) => {
-                const session = ctx.session;
+                const profile = ctx.profile;
                 const files = input.files;
-
-                const hasPermission = await ctx.prisma.profile
-                    .findFirst({
-                        where: {
-                            id: input.profileId,
-                            userId: session.user.id,
-                        },
-                    })
-                    .then((r) => Boolean(r));
-
-                if (!hasPermission) {
-                    throw new TRPCError({
-                        code: "FORBIDDEN",
-                        message: "You do not have access to this profile.",
-                    });
-                }
 
                 // TODO: Validate reblog post exists
                 const post = await tx.post.create({
                     data: {
                         inReplyToId: input.inReplyToId,
                         reblogId: input.reblogId,
-                        profileId: input.profileId,
+                        profileId: profile?.id as string,
                         content: input.content,
                     },
                 });

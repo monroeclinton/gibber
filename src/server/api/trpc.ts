@@ -116,6 +116,21 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 });
 
 /**
+ * Reusable middleware that enforces users have a valid profile set
+ */
+const enforceProfile = t.middleware(({ ctx, next }) => {
+    if (!ctx.profile) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+        ctx: {
+            // infers the `session` as non-nullable
+            session: { ...ctx.session, profile: ctx.profile },
+        },
+    });
+});
+
+/**
  * Protected (authed) procedure
  *
  * If you want a query or mutation to ONLY be accessible to logged in users, use
@@ -125,3 +140,5 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const protectedProcedureWithProfile =
+    protectedProcedure.use(enforceProfile);
