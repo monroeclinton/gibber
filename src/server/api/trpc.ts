@@ -22,16 +22,18 @@
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
+import type { Profile } from "@prisma/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
 import superjson from "superjson";
 
-import { getServerAuthSession } from "../auth";
+import { getServerAuthProfile, getServerAuthSession } from "../auth";
 import { prisma } from "../db";
 
 type CreateContextOptions = {
     session: Session | null;
+    profile: Profile | null;
 };
 
 /**
@@ -45,7 +47,7 @@ type CreateContextOptions = {
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
     return {
-        session: opts.session,
+        ...opts,
         prisma,
     };
 };
@@ -60,9 +62,11 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
     // Get the session from the server using the unstable_getServerSession wrapper function
     const session = await getServerAuthSession({ req, res });
+    const profile = await getServerAuthProfile({ req, res, session });
 
     return createInnerTRPCContext({
         session,
+        profile,
     });
 };
 
