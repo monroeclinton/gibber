@@ -11,6 +11,7 @@ import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
 
 import { type AppRouter } from "../server/api/root";
+import { getProfileId } from "./use-profile";
 
 const getBaseUrl = () => {
     if (typeof window !== "undefined") return ""; // browser should use relative url
@@ -43,6 +44,19 @@ export const api = createTRPCNext<AppRouter>({
                 }),
                 httpBatchLink({
                     url: `${getBaseUrl()}/api/trpc`,
+                    fetch(url, options) {
+                        const profileId = getProfileId();
+                        options = options === undefined ? {} : options;
+
+                        if (profileId) {
+                            options.headers = {
+                                ...options.headers,
+                                profileId,
+                            };
+                        }
+
+                        return fetch(url, options);
+                    },
                 }),
             ],
         };
