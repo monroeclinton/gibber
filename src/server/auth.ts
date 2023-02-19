@@ -26,9 +26,15 @@ export const getServerAuthProfile = async (ctx: {
     res: GetServerSidePropsContext["res"];
     session: Session | null;
 }) => {
+    const profileId = ctx.req.headers.profileid;
+
+    if (typeof profileId !== "string") {
+        return null;
+    }
+
     return await prisma.profile.findFirst({
         where: {
-            id: ctx.req.cookies.profileId,
+            id: profileId,
             userId: ctx.session?.user?.id,
         },
     });
