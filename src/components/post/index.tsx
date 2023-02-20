@@ -80,25 +80,25 @@ const Post: React.FC<{
     const [isReblogDropdownOpen, setReblogDropdownOpen] = useState(false);
     const reblogDropdownRef = useRef<HTMLDivElement>(null);
 
-    const delete = api.post.delete.useMutation({
+    const postDelete = api.post.delete.useMutation({
         onSuccess: async () => {
             await utils.post.getFeedByProfileId.refetch();
         },
     });
 
-    const reblog = api.reblog.create.useMutation({
+    const reblogCreate = api.reblog.create.useMutation({
         onSuccess: async () => {
             await utils.post.getFeedByProfileId.refetch();
         },
     });
 
-    const unreblog = api.reblog.delete.useMutation({
+    const reblogDelete = api.reblog.delete.useMutation({
         onSuccess: async () => {
             await utils.post.getFeedByProfileId.refetch();
         },
     });
 
-    const favorite = api.favorite.create.useMutation({
+    const favoriteCreate = api.favorite.create.useMutation({
         onSuccess: () => {
             if (profileId) {
                 utils.post.getFeedByProfileId.setData(
@@ -122,7 +122,7 @@ const Post: React.FC<{
         },
     });
 
-    const unfavorite = api.favorite.delete.useMutation({
+    const favoriteDelete = api.favorite.delete.useMutation({
         onSuccess: () => {
             if (profileId) {
                 utils.post.getFeedByProfileId.setData(
@@ -165,11 +165,11 @@ const Post: React.FC<{
         }
 
         if (!post.isReblogged) {
-            reblog.mutate({
+            reblogCreate.mutate({
                 postId: post.id,
             });
         } else {
-            unreblog.mutate({
+            reblogDelete.mutate({
                 postId: post.id,
             });
         }
@@ -190,11 +190,11 @@ const Post: React.FC<{
         }
 
         if (!post.isFavorited) {
-            favorite.mutate({
+            favoriteCreate.mutate({
                 postId: post.id,
             });
         } else {
-            unfavorite.mutate({
+            favoriteDelete.mutate({
                 postId: post.id,
             });
         }
@@ -203,7 +203,7 @@ const Post: React.FC<{
     const onDelete = (e: React.MouseEvent<HTMLElement>) => {
         e.stopPropagation();
 
-        delete.mutate({
+        postDelete.mutate({
             postId: post.id,
         });
     };
