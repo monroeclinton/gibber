@@ -5,6 +5,7 @@ import {
 } from "@heroicons/react/24/outline";
 import {
     ArrowPathRoundedSquareIcon as SolidArrowPathRoundedSquareIcon,
+    EllipsisHorizontalIcon,
     HeartIcon as SolidHeartIcon,
     UserIcon,
 } from "@heroicons/react/24/solid";
@@ -73,8 +74,17 @@ const Post: React.FC<{
     const [, setCreatePost] = useAtom(createPostAtom);
     const [, setReblogPost] = useAtom(reblogPostAtom);
 
+    const [isOptionsDropdownOpen, setOptionsDropdownOpen] = useState(false);
+    const optionsDropdownRef = useRef<HTMLDivElement>(null);
+
     const [isReblogDropdownOpen, setReblogDropdownOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const reblogDropdownRef = useRef<HTMLDivElement>(null);
+
+    const delete = api.post.delete.useMutation({
+        onSuccess: async () => {
+            await utils.post.getFeedByProfileId.refetch();
+        },
+    });
 
     const reblog = api.reblog.create.useMutation({
         onSuccess: async () => {
@@ -136,6 +146,11 @@ const Post: React.FC<{
         },
     });
 
+    const onOptionsDropdown = (e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
+        setOptionsDropdownOpen(true);
+    };
+
     const onReblogDropdown = (e: React.MouseEvent<HTMLElement>) => {
         e.stopPropagation();
         setReblogDropdownOpen(true);
@@ -185,7 +200,16 @@ const Post: React.FC<{
         }
     };
 
-    useOutsideClick(() => setReblogDropdownOpen(false), dropdownRef);
+    const onDelete = (e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
+
+        delete.mutate({
+            postId: post.id,
+        });
+    };
+
+    useOutsideClick(() => setOptionsDropdownOpen(false), optionsDropdownRef);
+    useOutsideClick(() => setReblogDropdownOpen(false), reblogDropdownRef);
 
     if (post.reblog && post.content === null) {
         return <Post reblogger={post.profile} post={post.reblog} />;
@@ -206,7 +230,7 @@ const Post: React.FC<{
                     <p>@{reblogger.username} Reblogged</p>
                 </div>
             )}
-            <div className="flex">
+            <div className="flex items-start">
                 <Link
                     href={`/${post.profile.username}`}
                     onClick={(e) => e.stopPropagation()}
@@ -232,7 +256,7 @@ const Post: React.FC<{
                         )}
                     </div>
                 </Link>
-                <div className="ml-3.5 flex flex-col justify-center">
+                <div className="ml-3.5 flex flex-col justify-center self-center">
                     <Link
                         className="hover:underline"
                         href={`/${post.profile.username}`}
@@ -243,6 +267,31 @@ const Post: React.FC<{
                     <p className="text-sm">
                         {post.createdAt.toLocaleDateString()}
                     </p>
+                </div>
+                <div
+                    className="relative ml-auto hover:cursor-pointer"
+                    onClick={onOptionsDropdown}
+                >
+                    <EllipsisHorizontalIcon
+                        className="mr-3"
+                        width={20}
+                        height={20}
+                    />
+                    {isOptionsDropdownOpen && (
+                        <div
+                            className="absolute right-1 -top-2 mt-2 w-40 rounded-md border border-neutral-200 bg-white shadow"
+                            ref={optionsDropdownRef}
+                        >
+                            <div className="py-1" role="none">
+                                <div
+                                    className="block px-4 py-2 transition-all hover:bg-neutral-100"
+                                    onClick={onDelete}
+                                >
+                                    <p>Delete Post</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             {post.content && (
@@ -291,7 +340,7 @@ const Post: React.FC<{
                     {isReblogDropdownOpen && (
                         <div
                             className="absolute left-0 -top-2 mt-2 w-40 rounded-md border border-neutral-200 bg-white shadow"
-                            ref={dropdownRef}
+                            ref={reblogDropdownRef}
                         >
                             <div className="py-1" role="none">
                                 <div
