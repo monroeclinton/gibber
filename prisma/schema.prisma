@@ -33,6 +33,8 @@ model Post {
     notifications  Notification[]
     createdAt      DateTime      @default(now())
     updatedAt      DateTime      @updatedAt
+
+    @@unique([id, profileId])
 }
 
 model Attachment {
