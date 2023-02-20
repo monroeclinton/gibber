@@ -413,6 +413,44 @@ export const postRouter = createTRPCRouter({
                 };
             });
         }),
+    delete: protectedProcedureWithProfile
+        .input(
+            z.object({
+                postId: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const profile = ctx.profile;
+
+            const filter = ctx.session.user?.isAdmin
+                ? { id: input.postId }
+                : {
+                      id_profileId: {
+                          id: input.postId,
+                          profileId: profile?.id as string,
+                      },
+                  };
+
+            const post = await ctx.prisma.post.delete({
+                where: filter,
+            });
+
+            if (post && post.reblogId) {
+                await ctx.prisma.post.update({
+                    where: { id: post.reblogId },
+                    data: { reblogsCount: { decrement: 1 } },
+                });
+            }
+
+            if (post && post.inReplyToId) {
+                await ctx.prisma.post.update({
+                    where: { id: post.inReplyToId },
+                    data: { repliesCount: { decrement: 1 } },
+                });
+            }
+
+            return post;
+        }),
     createPresignedUrls: protectedProcedure
         .input(z.object({ count: z.number().gte(1).lte(4) }))
         .query(async ({ input }) => {
