@@ -9,7 +9,7 @@ import {
     HeartIcon as SolidHeartIcon,
     UserIcon,
 } from "@heroicons/react/24/solid";
-import type { Prisma, Profile } from "@prisma/client";
+import type { Profile } from "@prisma/client";
 import classNames from "classnames";
 import { useAtom } from "jotai";
 import Image from "next/image";
@@ -18,52 +18,15 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
 import { createPostAtom, reblogPostAtom } from "../../atoms";
+import { type Post as IPost } from "../../types/post";
 import { api } from "../../utils/api";
 import useOutsideClick from "../../utils/use-outside-click";
 import { getProfileId } from "../../utils/use-profile";
 import Attachments from "./Attachments";
 
-type IPost = Prisma.PostGetPayload<{
-    include: {
-        profile: {
-            include: {
-                avatar: true;
-            };
-        };
-        attachments: {
-            include: {
-                file: true;
-            };
-        };
-        reblog: {
-            include: {
-                profile: {
-                    include: {
-                        avatar: true;
-                    };
-                };
-                attachments: {
-                    include: {
-                        file: true;
-                    };
-                };
-            };
-        };
-    };
-}>;
-
-type WithIsInteractions<T> = T & {
-    isReblogged: boolean;
-    isFavorited: boolean;
-    reblog: T & {
-        isReblogged: boolean;
-        isFavorited: boolean;
-    };
-};
-
 const Post: React.FC<{
     reblogger?: Profile;
-    post: WithIsInteractions<IPost>;
+    post: IPost;
 }> = ({ reblogger, post }) => {
     const router = useRouter();
 

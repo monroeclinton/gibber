@@ -5,7 +5,6 @@ import {
     PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import probe from "probe-image-size";
 import type { Readable } from "stream";
@@ -13,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
 import { env } from "../../../env/server.mjs";
+import { type BasePost, type Post, postInclude } from "../../../types/post";
 import { prisma } from "../../db";
 import { s3Client, s3Server } from "../../s3";
 import {
@@ -22,71 +22,10 @@ import {
     publicProcedure,
 } from "../trpc";
 
-const basePostInclude = {
-    profile: {
-        include: {
-            header: true,
-            avatar: true,
-        },
-    },
-    attachments: {
-        include: {
-            file: true,
-        },
-    },
-};
-
-const postInclude = {
-    ...basePostInclude,
-    reblog: {
-        include: basePostInclude,
-    },
-};
-
-type Post = Prisma.PostGetPayload<{
-    include: {
-        profile: {
-            include: {
-                avatar: true;
-            };
-        };
-        attachments: {
-            include: {
-                file: true;
-            };
-        };
-        reblog: {
-            include: {
-                profile: {
-                    include: {
-                        avatar: true;
-                    };
-                };
-                attachments: {
-                    include: {
-                        file: true;
-                    };
-                };
-            };
-        };
-    };
-}>;
-
-type WithInteractions<T> = T & {
-    isReblogged: boolean;
-    isFavorited: boolean;
-    reblog:
-        | null
-        | (T & {
-              isReblogged: boolean;
-              isFavorited: boolean;
-          });
-};
-
 const computeInteractions = async (
-    posts: Post[],
+    posts: BasePost[],
     profileId?: string
-): Promise<WithInteractions<Post>[]> => {
+): Promise<Post[]> => {
     const reblogs = await prisma.post.findMany({
         where: {
             profileId,
@@ -106,8 +45,8 @@ const computeInteractions = async (
     const reblogIds = reblogs.map((reblog) => reblog.reblogId);
     const favoriteIds = favorites.map((favorite) => favorite.postId);
 
-    return posts.map((post: Post): WithInteractions<Post> => {
-        let reblog: { reblog: null | WithInteractions<Post> } = {
+    return posts.map((post: BasePost): Post => {
+        let reblog: { reblog: null | Post } = {
             reblog: null,
         };
 
