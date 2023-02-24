@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import Head from "next/head";
 
 import NavButton from "../components/button/NavButton";
-import TopBar from "../components/nav/TopBar";
 import Post from "../components/post";
 import Topbar from "../components/Topbar";
 import { api } from "../utils/api";
@@ -30,10 +29,10 @@ const Home: NextPage = () => {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <TopBar>
+            <Topbar>
                 <NavButton />
                 <p className="ml-5 font-semibold">Latest Posts</p>
-            </TopBar>
+            </Topbar>
             {posts.data &&
                 posts.data.map((post) => <Post post={post} key={post.id} />)}
             {posts.isFetched && posts.data?.length === 0 && (

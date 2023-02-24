@@ -28,7 +28,7 @@ import { clearProfileId, useProfile } from "../../utils/use-profile";
 import Button from "../button";
 import CloseButton from "../button/CloseButton";
 import Sidebar from "../Sidebar";
-import TopBar from "./TopBar";
+import Topbar from "../Topbar";
 
 // Make sure you change the tailwind duration too,
 // literal values are not allowed.
@@ -181,13 +181,13 @@ const Content: React.FC<{
 
     return (
         <Sidebar className={className}>
-            <TopBar mobileOnly>
+            <Topbar mobileOnly>
                 <Logo width={40} height={40} />
                 <CloseButton
                     className="ml-auto"
                     onClick={() => setNavOpen(false)}
                 />
-            </TopBar>
+            </Topbar>
             <div className="mt-12 flex flex-col justify-center px-8">
                 <AuthCard />
                 <div className="relative mt-16">
