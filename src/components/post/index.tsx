@@ -68,10 +68,15 @@ const Post: React.FC<{
                     { profileId },
                     (prevData) => {
                         if (prevData) {
-                            prevData = prevData.map((data) => {
+                            return prevData.map((data) => {
                                 if (data.id === post.id) {
                                     data.isFavorited = true;
                                     data.favoritesCount += 1;
+                                }
+
+                                if (data.reblog && data.reblog.id === post.id) {
+                                    data.reblog.isFavorited = true;
+                                    data.reblog.favoritesCount += 1;
                                 }
 
                                 return data;
@@ -92,10 +97,15 @@ const Post: React.FC<{
                     { profileId },
                     (prevData) => {
                         if (prevData) {
-                            prevData = prevData.map((data) => {
+                            return prevData.map((data) => {
                                 if (data.id === post.id) {
                                     data.isFavorited = false;
                                     data.favoritesCount -= 1;
+                                }
+
+                                if (data.reblog && data.reblog.id === post.id) {
+                                    data.reblog.isFavorited = false;
+                                    data.reblog.favoritesCount -= 1;
                                 }
 
                                 return data;
