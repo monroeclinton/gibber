@@ -5,8 +5,8 @@ import { SessionProvider } from "next-auth/react";
 
 import AuthGuard from "../components/auth/AuthGuard";
 import ProfileManager from "../components/auth/ProfileManager";
-import BottomBar from "../components/nav/BottomBar";
-import SideBar from "../components/nav/SideBar";
+import BottomNav from "../components/nav/Bottom";
+import SideNav from "../components/nav/Side";
 import CreateModal from "../components/post/create/CreateModal";
 import { type GibberAppProps } from "../types/next";
 import { api } from "../utils/api";
@@ -25,8 +25,8 @@ const MyApp: React.FC<GibberAppProps> = ({
                 ) : (
                     <Component {...pageProps} />
                 )}
-                <BottomBar />
-                <SideBar />
+                <SideNav type="mobile" />
+                <BottomNav />
                 <ProfileManager />
                 <CreateModal />
             </Provider>

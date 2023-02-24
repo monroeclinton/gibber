@@ -17,23 +17,23 @@ import { useProfile } from "../../utils/use-profile";
 import Button from "../button";
 
 const defaultClassName =
-    "fixed left-6 right-6 bottom-4 left-1/2 w-[330px] -translate-x-1/2";
+    "lg:hidden fixed left-6 right-6 bottom-4 left-1/2 w-[330px] -translate-x-1/2";
 
-const BottomBar: React.FC = () => {
+const Bottom: React.FC = () => {
     const { status: sessionStatus } = useSession();
 
     if (sessionStatus === "authenticated") {
-        return <AuthedBottomBar />;
+        return <AuthedBar />;
     }
 
     if (sessionStatus === "unauthenticated") {
-        return <AuthBottomBar />;
+        return <AuthBar />;
     }
 
     return null;
 };
 
-const AuthBottomBar = () => {
+const AuthBar = () => {
     return (
         <div
             className={classNames(
@@ -57,7 +57,7 @@ const AuthBottomBar = () => {
     );
 };
 
-const AuthedBottomBar = () => {
+const AuthedBar = () => {
     const router = useRouter();
     const { profile } = useProfile();
 
@@ -116,4 +116,4 @@ const AuthedBottomBar = () => {
     );
 };
 
-export default BottomBar;
+export default Bottom;
