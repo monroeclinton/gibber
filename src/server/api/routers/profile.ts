@@ -21,7 +21,7 @@ export const profileRouter = createTRPCRouter({
 
         return ctx.prisma.profile.findMany({
             where: {
-                user: session.user,
+                userId: session.user.id,
             },
             orderBy: [
                 {
