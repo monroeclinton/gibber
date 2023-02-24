@@ -6,8 +6,8 @@ import { useState } from "react";
 import Button from "../components/button";
 import NavButton from "../components/button/NavButton";
 import Modal from "../components/modal";
-import TopBar from "../components/nav/TopBar";
 import Post from "../components/post";
+import Topbar from "../components/Topbar";
 import { api } from "../utils/api";
 
 const Search: NextPage = () => {
@@ -63,7 +63,7 @@ const Search: NextPage = () => {
                     </Button>
                 </div>
             </Modal>
-            <TopBar>
+            <Topbar>
                 <NavButton />
                 <div className="ml-5 flex h-full grow py-1">
                     <input
@@ -82,7 +82,7 @@ const Search: NextPage = () => {
                 >
                     <AdjustmentsHorizontalIcon width={20} height={20} />
                 </Button>
-            </TopBar>
+            </Topbar>
             {posts.data &&
                 posts.data.map((post) => <Post post={post} key={post.id} />)}
             {posts.data?.length === 0 && (

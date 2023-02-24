@@ -4,6 +4,7 @@ import Head from "next/head";
 import NavButton from "../components/button/NavButton";
 import TopBar from "../components/nav/TopBar";
 import Post from "../components/post";
+import Topbar from "../components/Topbar";
 import { api } from "../utils/api";
 import { getProfileId } from "../utils/use-profile";
 

@@ -5,7 +5,7 @@ import { useState } from "react";
 import Button from "../components/button";
 import NavButton from "../components/button/NavButton";
 import Modal from "../components/modal";
-import TopBar from "../components/nav/TopBar";
+import Topbar from "../components/Topbar";
 import { type GibberPage } from "../types/next";
 import { api } from "../utils/api";
 import { clearProfileId } from "../utils/use-profile";
@@ -45,10 +45,10 @@ const Settings: GibberPage = () => {
                     </Button>
                 </div>
             </Modal>
-            <TopBar>
+            <Topbar>
                 <NavButton />
                 <p className="ml-5 font-semibold">Settings</p>
-            </TopBar>
+            </Topbar>
             <div className="px-6">
                 <div className="mt-6 flex">
                     <p>

@@ -3,9 +3,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import NavButton from "../../components/button/NavButton";
-import TopBar from "../../components/nav/TopBar";
 import Post from "../../components/post";
 import CreatePost from "../../components/post/create";
+import Topbar from "../../components/Topbar";
 import { api } from "../../utils/api";
 
 const PostPage: NextPage = () => {
@@ -63,10 +63,10 @@ const PostPage: NextPage = () => {
                     </svg>
                 </div>
             )}
-            <TopBar>
+            <Topbar>
                 <NavButton />
                 <p className="ml-5 font-semibold">Post</p>
-            </TopBar>
+            </Topbar>
             {post.data && (
                 <>
                     <Post post={post.data} />

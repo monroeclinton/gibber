@@ -4,8 +4,8 @@ import Head from "next/head";
 import Image from "next/image";
 
 import NavButton from "../components/button/NavButton";
-import TopBar from "../components/nav/TopBar";
 import { PreviewPost } from "../components/post";
+import Topbar from "../components/Topbar";
 import type { GibberPage } from "../types/next";
 import { api } from "../utils/api";
 
