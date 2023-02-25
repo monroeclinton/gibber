@@ -10,7 +10,7 @@ const Container: React.FC<IContainerProps> = ({ children }) => {
         <div className="flex justify-center">
             <SideNav type="desktop" className="sticky top-0 mr-[40px] h-full" />
             <div className="max-w-[615px] grow">
-                <div className="flex h-[65px]">
+                <div className="hidden h-[65px] lg:flex">
                     <input
                         className="my-3 grow rounded-lg border-2 border-none bg-neutral-100 px-3.5 placeholder:text-neutral-600 focus:outline-none"
                         type="text"
