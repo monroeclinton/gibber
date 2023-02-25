@@ -112,7 +112,7 @@ const Content: React.FC<{
     const [, setNavOpen] = useAtom(navOpenAtom);
 
     const className = classNames(props.className, {
-        defaultClassName: type === "mobile",
+        [defaultClassName]: type === "mobile",
         "-translate-x-full skew-y-6": [ENTERING, EXITING].includes(state),
         "translate-x-0": state === ENTERED,
     });
