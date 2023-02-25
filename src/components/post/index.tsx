@@ -190,7 +190,7 @@ const Post: React.FC<{
 
     return (
         <div
-            className="border-b-2 border-neutral-50 px-6 py-5 transition-colors hover:cursor-pointer hover:bg-neutral-50"
+            className="border-b-2 border-neutral-100 px-6 py-5 transition-colors hover:cursor-pointer hover:bg-neutral-50 lg:mb-1 lg:rounded lg:border-2"
             onClick={() => void router.push(`/post/${post.id}`)}
         >
             {reblogger && (
