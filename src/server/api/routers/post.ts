@@ -84,7 +84,7 @@ export const postRouter = createTRPCRouter({
                 include: postInclude,
             });
 
-            return await computeInteractions([post], profile?.id);
+            return (await computeInteractions([post], profile?.id))[0];
         }),
     getRepliesById: publicProcedure
         .input(z.object({ id: z.string() }))
