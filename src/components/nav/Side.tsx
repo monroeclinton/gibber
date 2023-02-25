@@ -186,10 +186,12 @@ const Content: React.FC<{
                     onClick={() => setNavOpen(false)}
                 />
             </Topbar>
-            <div className="mt-12 flex grow flex-col items-end px-8">
-                {type === "desktop" && <Logo width={75} height={75} />}
+            <div className="mt-12 flex grow flex-col px-8">
+                {type === "desktop" && (
+                    <Logo width={75} height={75} className="self-end" />
+                )}
                 {type === "mobile" && <AuthCard type={type} />}
-                <div className="relative mt-16">
+                <div className="relative mt-16 grow">
                     {top >= 0 && (
                         <div
                             className="absolute top-[138px] -right-8 h-[45px] rounded border-r-2 border-red-700"
@@ -210,7 +212,7 @@ const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
     const { profile } = useProfile();
 
     const className = classNames("flex", {
-        "mt-auto mb-4": type === "desktop",
+        "mb-4": type === "desktop",
     });
 
     if (sessionStatus === "unauthenticated") {
@@ -242,14 +244,14 @@ const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
         <div
             className={classNames(
                 className,
-                "items-center justify-between rounded bg-gradient-to-r py-2 hover:cursor-pointer hover:from-neutral-100"
+                "flex-col rounded bg-gradient-to-r p-2 hover:cursor-pointer hover:from-neutral-100"
             )}
             onClick={() => clearProfileId()}
         >
-            <div className="mr-2 flex">
-                <ChevronUpDownIcon width={30} height={30} />
-            </div>
-            <div className="flex flex-col items-end">
+            <div className="flex items-center justify-end">
+                <div className="mr-2 flex">
+                    <ChevronUpDownIcon width={30} height={30} />
+                </div>
                 {profile.data?.avatar && (
                     <Image
                         className="rounded-full"
@@ -264,10 +266,10 @@ const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
                         <SolidUserIcon className="m-[25%] w-1/2 text-neutral-400" />
                     </div>
                 )}
-                <p className="mt-2 text-lg md:hidden xl:block">
-                    {profile.data?.username}
-                </p>
             </div>
+            <p className="mt-2 text-end text-lg empty:before:inline-block empty:before:content-[''] md:hidden xl:block">
+                {profile.data?.username}
+            </p>
         </div>
     );
 };
