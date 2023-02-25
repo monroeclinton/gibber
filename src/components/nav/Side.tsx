@@ -41,19 +41,19 @@ const defaultClassName = `
 
 type HeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
 
-interface ISidebarItem {
+interface INavItem {
     url: string;
     text: string;
     icon: HeroIcon;
     auth: boolean;
 }
 
-interface ISidebarProps {
+interface ISideProps {
     className?: string;
     type: "mobile" | "desktop";
 }
 
-const Side: React.FC<ISidebarProps> = ({ className, type }) => {
+const Side: React.FC<ISideProps> = ({ className, type }) => {
     const router = useRouter();
 
     const [navOpen, setNavOpen] = useAtom(navOpenAtom);
@@ -119,7 +119,7 @@ const Content: React.FC<{
         "translate-x-0": state === ENTERED,
     });
 
-    const sidebarItems: ISidebarItem[] = [
+    const sidebarItems: INavItem[] = [
         {
             url: "/",
             text: "Home",
