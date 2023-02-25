@@ -273,7 +273,7 @@ const Post: React.FC<{
                 </div>
             )}
             {post.attachments.length > 0 && (
-                <div className="mt-3.5 h-[250px]">
+                <div className="mt-3.5 h-[250px] md:h-[320px]">
                     <Attachments attachments={post.attachments} />
                 </div>
             )}
@@ -401,7 +401,7 @@ const PreviewPost: React.FC<{ post: IPost }> = ({ post }) => {
                 </div>
             )}
             {post.attachments.length > 0 && (
-                <div className="mt-2 h-[250px]">
+                <div className="mt-2 h-[250px] md:h-[320px]">
                     <Attachments attachments={post.attachments} />
                 </div>
             )}
