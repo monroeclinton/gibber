@@ -11,7 +11,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ className, children, type }) => {
         <div
             className={classNames(className, "w-full max-w-[320px] bg-white", {
                 "lg:hidden": type === "mobile",
-                "hidden lg:block": type === "desktop",
+                "hidden lg:flex": type === "desktop",
             })}
         >
             {children}

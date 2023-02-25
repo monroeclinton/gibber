@@ -113,8 +113,6 @@ const Content: React.FC<{
 
     const className = classNames(props.className, {
         defaultClassName: type === "mobile",
-        "lg:hidden": type === "mobile",
-        "hidden lg:block": type === "desktop",
         "-translate-x-full skew-y-6": [ENTERING, EXITING].includes(state),
         "translate-x-0": state === ENTERED,
     });
@@ -167,7 +165,7 @@ const Content: React.FC<{
             href={item.url}
             key={"side-bar" + item.url + item.text}
         >
-            <p className="mr-6 text-xl">{item.text}</p>
+            <p className="mr-6 text-xl md:hidden xl:block">{item.text}</p>
             <item.icon width={30} height={30} />
         </Link>
     ));
@@ -188,8 +186,9 @@ const Content: React.FC<{
                     onClick={() => setNavOpen(false)}
                 />
             </Topbar>
-            <div className="mt-12 flex flex-col justify-center px-8">
-                <AuthCard />
+            <div className="mt-12 flex flex-col items-end px-8">
+                {type === "desktop" && <Logo width={75} height={75} />}
+                {type === "mobile" && <AuthCard type={type} />}
                 <div className="relative mt-16">
                     {top >= 0 && (
                         <div
@@ -199,19 +198,29 @@ const Content: React.FC<{
                     )}
                     {items}
                 </div>
+                {type === "desktop" && <AuthCard type={type} />}
             </div>
         </Sidebar>
     );
 };
 
-const AuthCard: React.FC = () => {
+const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
     const { status: sessionStatus } = useSession();
 
     const { profile } = useProfile();
 
+    const className = classNames("flex", {
+        "mt-auto mb-4": type === "desktop",
+    });
+
     if (sessionStatus === "unauthenticated") {
         return (
-            <div className="flex grow flex-col rounded border-2 border-neutral-100 px-6 py-5">
+            <div
+                className={classNames(
+                    className,
+                    "grow flex-col rounded border-2 border-neutral-100 px-6 py-5"
+                )}
+            >
                 <p className="text-xl font-semibold">Welcome to Gibber!</p>
                 <div className="mt-3.5 flex gap-2">
                     <Button className="w-1/2" onClick={() => void signIn()}>
@@ -231,10 +240,13 @@ const AuthCard: React.FC = () => {
 
     return (
         <div
-            className="flex items-center justify-between rounded bg-gradient-to-r py-2 hover:cursor-pointer hover:from-neutral-100"
+            className={classNames(
+                className,
+                "items-center justify-between rounded bg-gradient-to-r py-2 hover:cursor-pointer hover:from-neutral-100"
+            )}
             onClick={() => clearProfileId()}
         >
-            <div className="flex">
+            <div className="mr-2 flex">
                 <ChevronUpDownIcon width={30} height={30} />
             </div>
             <div className="flex flex-col items-end">
@@ -252,7 +264,9 @@ const AuthCard: React.FC = () => {
                         <SolidUserIcon className="m-[25%] w-1/2 text-neutral-400" />
                     </div>
                 )}
-                <p className="mt-2 text-lg">{profile.data?.username}</p>
+                <p className="mt-2 text-lg md:hidden xl:block">
+                    {profile.data?.username}
+                </p>
             </div>
         </div>
     );
