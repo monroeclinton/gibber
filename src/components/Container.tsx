@@ -19,7 +19,10 @@ const Container: React.FC<IContainerProps> = ({ children }) => {
                 </div>
                 {children}
             </div>
-            <Sidebar className="sticky top-[65px] ml-[40px] h-full">
+            <Sidebar
+                className="sticky top-[65px] ml-[40px] h-full"
+                type="desktop"
+            >
                 <h1 className="text-lg font-semibold">Discover People</h1>
             </Sidebar>
         </div>

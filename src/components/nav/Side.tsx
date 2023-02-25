@@ -180,7 +180,7 @@ const Content: React.FC<{
             .indexOf(router.asPath) * 45;
 
     return (
-        <Sidebar className={className}>
+        <Sidebar className={className} type={type}>
             <Topbar mobileOnly>
                 <Logo width={40} height={40} />
                 <CloseButton
