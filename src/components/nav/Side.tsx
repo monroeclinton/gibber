@@ -186,7 +186,7 @@ const Content: React.FC<{
                     onClick={() => setNavOpen(false)}
                 />
             </Topbar>
-            <div className="mt-12 flex flex-col items-end px-8">
+            <div className="mt-12 flex grow flex-col items-end px-8">
                 {type === "desktop" && <Logo width={75} height={75} />}
                 {type === "mobile" && <AuthCard type={type} />}
                 <div className="relative mt-16">
