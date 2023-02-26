@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import Button from "../components/button";
 import NavButton from "../components/button/NavButton";
+import Container from "../components/Container";
 import Modal from "../components/modal";
 import Post from "../components/post";
 import Topbar from "../components/Topbar";
@@ -63,7 +64,7 @@ const Search: NextPage = () => {
                     </Button>
                 </div>
             </Modal>
-            <Topbar>
+            <Topbar mobileOnly>
                 <NavButton />
                 <div className="ml-5 flex h-full grow py-1">
                     <input
@@ -83,13 +84,17 @@ const Search: NextPage = () => {
                     <AdjustmentsHorizontalIcon width={20} height={20} />
                 </Button>
             </Topbar>
-            {posts.data &&
-                posts.data.map((post) => <Post post={post} key={post.id} />)}
-            {posts.data?.length === 0 && (
-                <div className="bg-neutral-50 p-4 text-neutral-800">
-                    There are no posts here.
-                </div>
-            )}
+            <Container>
+                {posts.data &&
+                    posts.data.map((post) => (
+                        <Post post={post} key={post.id} />
+                    ))}
+                {posts.data?.length === 0 && (
+                    <div className="bg-neutral-50 p-4 text-neutral-800">
+                        There are no posts here.
+                    </div>
+                )}
+            </Container>
         </>
     );
 };

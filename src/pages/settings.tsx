@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import Button from "../components/button";
 import NavButton from "../components/button/NavButton";
+import Container from "../components/Container";
 import Modal from "../components/modal";
 import Topbar from "../components/Topbar";
 import { type GibberPage } from "../types/next";
@@ -45,27 +46,29 @@ const Settings: GibberPage = () => {
                     </Button>
                 </div>
             </Modal>
-            <Topbar>
+            <Topbar mobileOnly>
                 <NavButton />
                 <p className="ml-5 font-semibold">Settings</p>
             </Topbar>
-            <div className="px-6">
-                <div className="mt-6 flex">
-                    <p>
-                        Deleting your account will delete all your profiles,
-                        posts, and user data.
-                    </p>
+            <Container>
+                <div className="px-6 md:px-0">
+                    <div className="mt-6 flex">
+                        <p>
+                            Deleting your account will delete all your profiles,
+                            posts, and user data.
+                        </p>
+                    </div>
+                    <div className="mt-6 flex">
+                        <Button
+                            className="grow"
+                            onClick={() => setDeleteModalOpen(true)}
+                        >
+                            Delete Account
+                        </Button>
+                    </div>
+                    <hr className="my-6 h-px border-0 bg-neutral-200" />
                 </div>
-                <div className="mt-6 flex">
-                    <Button
-                        className="grow"
-                        onClick={() => setDeleteModalOpen(true)}
-                    >
-                        Delete Account
-                    </Button>
-                </div>
-                <hr className="my-6 h-px border-0 bg-neutral-200" />
-            </div>
+            </Container>
         </>
     );
 };

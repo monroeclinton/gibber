@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import NavButton from "../../components/button/NavButton";
+import Container from "../../components/Container";
 import Post from "../../components/post";
 import CreatePost from "../../components/post/create";
 import Topbar from "../../components/Topbar";
@@ -63,23 +64,27 @@ const PostPage: NextPage = () => {
                     </svg>
                 </div>
             )}
-            <Topbar>
+            <Topbar mobileOnly>
                 <NavButton />
                 <p className="ml-5 font-semibold">Post</p>
             </Topbar>
-            {post.data && (
-                <>
-                    <Post post={post.data} />
-                    <div className="my-5 mx-6">
-                        <CreatePost
-                            inReplyToId={post.data.id}
-                            onPost={() => void onReply()}
-                        />
-                    </div>
-                </>
-            )}
-            {replies.data &&
-                replies.data.map((post) => <Post post={post} key={post.id} />)}
+            <Container>
+                {post.data && (
+                    <>
+                        <Post post={post.data} />
+                        <div className="my-5 mx-6 md:mx-0">
+                            <CreatePost
+                                inReplyToId={post.data?.id}
+                                onPost={() => void onReply()}
+                            />
+                        </div>
+                    </>
+                )}
+                {replies.data &&
+                    replies.data.map((post) => (
+                        <Post post={post} key={post.id} />
+                    ))}
+            </Container>
         </>
     );
 };
