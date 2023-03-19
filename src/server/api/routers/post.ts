@@ -13,6 +13,7 @@ import { z } from "zod";
 
 import { env } from "../../../env/server.mjs";
 import { type BasePost, type Post, postInclude } from "../../../types/post";
+import { parsePosts } from "../../../utils/activitypub";
 import { prisma } from "../../db";
 import { s3Client, s3Server } from "../../s3";
 import {
@@ -110,6 +111,12 @@ export const postRouter = createTRPCRouter({
             })
         )
         .query(async ({ ctx, input }) => {
+            if (input.id.startsWith("http://")) {
+                const res = await fetch(`${input.id}/outbox`);
+                const json: unknown = await res.json();
+                return parsePosts(json);
+            }
+
             const profile = ctx.profile;
 
             let filter: { inReplyToId?: null; attachments?: { some: object } } =

@@ -38,6 +38,18 @@ export const profileRouter = createTRPCRouter({
             })
         )
         .query(async ({ ctx, input }) => {
+            if (input.username.includes("@")) {
+                const [username, server] = input.username.split("@");
+
+                const res = await fetch(
+                    `http://${server as string}/api/activitypub/${
+                        username as string
+                    }`
+                );
+
+                return res.json();
+            }
+
             const profile = await ctx.prisma.profile.findFirst({
                 where: {
                     username: input.username,
