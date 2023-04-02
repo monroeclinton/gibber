@@ -220,7 +220,7 @@ const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
             <div
                 className={classNames(
                     className,
-                    "grow flex-col rounded border-2 border-neutral-100 px-6 py-5"
+                    "flex-col rounded border-2 border-neutral-100 px-6 py-5"
                 )}
             >
                 <p className="text-xl font-semibold">Welcome to Gibber!</p>
