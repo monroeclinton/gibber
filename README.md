@@ -12,7 +12,7 @@ It runs a [Next](https://nextjs.org/) server in development and a
 Clone this repository and copy `.env.example` to `.env`, `garage.toml.example` to `garage.toml`,
 and fill out your details.
 
-Then run `docker-compose up`.
+Then run `docker compose up`.
 
 To use and configure Garage with the CLI use:
 
