@@ -7,7 +7,7 @@ import Button from "../components/button";
 import NavButton from "../components/button/NavButton";
 import Container from "../components/Container";
 import Modal from "../components/modal";
-import Post from "../components/post";
+import Posts from "../components/post/Posts";
 import Topbar from "../components/Topbar";
 import { api } from "../utils/api";
 
@@ -85,15 +85,7 @@ const Search: NextPage = () => {
                 </Button>
             </Topbar>
             <Container>
-                {posts.data &&
-                    posts.data.map((post) => (
-                        <Post post={post} key={post.id} />
-                    ))}
-                {posts.data?.length === 0 && (
-                    <div className="bg-neutral-50 p-4 text-neutral-800">
-                        There are no posts here.
-                    </div>
-                )}
+                <Posts posts={posts} />
             </Container>
         </>
     );
