@@ -156,6 +156,7 @@ export const postRouter = createTRPCRouter({
         const posts = await ctx.prisma.post.findMany({
             where: {
                 inReplyToId: null,
+                reblogId: null,
             },
             orderBy: [
                 {
