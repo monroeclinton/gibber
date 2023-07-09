@@ -37,6 +37,10 @@ export const useProfile = () => {
         }
     );
 
+    if (profile.error?.data?.code === "UNAUTHORIZED") {
+        clearProfileId();
+    }
+
     useEffect(() => {
         const setProfile = () => {
             const profileId = getProfileId();
