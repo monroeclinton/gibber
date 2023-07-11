@@ -4,9 +4,10 @@ import { type Post as IPost } from "../../types/post";
 import Spinner from "../Spinner";
 import Post from ".";
 
-const Posts: React.FC<{ posts: QueryObserverBaseResult<IPost[]> }> = ({
-    posts,
-}) => {
+const Posts: React.FC<{
+    posts: QueryObserverBaseResult<IPost[]>;
+    isEnabled?: boolean;
+}> = ({ posts, isEnabled = true }) => {
     return (
         <>
             {posts.isInitialLoading && (
@@ -16,8 +17,7 @@ const Posts: React.FC<{ posts: QueryObserverBaseResult<IPost[]> }> = ({
             )}
             {posts.data &&
                 posts.data.map((post) => <Post post={post} key={post.id} />)}
-            {((posts.isFetched && posts.data?.length === 0) ||
-                posts.fetchStatus === "idle") && (
+            {((posts.isFetched && posts.data?.length === 0) || !isEnabled) && (
                 <div className="bg-neutral-50 p-4 text-neutral-800">
                     There are no posts here.
                 </div>
