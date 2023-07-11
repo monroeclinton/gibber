@@ -15,6 +15,7 @@ const Search: NextPage = () => {
     const [content, setContent] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [isFilterModalOpen, setFilterModalOpen] = useState<boolean>(false);
+    const isEnabled = content.length > 0 || username.length > 0;
 
     const posts = api.post.search.useQuery(
         {
@@ -22,7 +23,7 @@ const Search: NextPage = () => {
             username,
         },
         {
-            enabled: content.length > 0 || username.length > 0,
+            enabled: isEnabled,
         }
     );
 
@@ -85,7 +86,7 @@ const Search: NextPage = () => {
                 </Button>
             </Topbar>
             <Container>
-                <Posts posts={posts} />
+                <Posts posts={posts} isEnabled={isEnabled} />
             </Container>
         </>
     );
