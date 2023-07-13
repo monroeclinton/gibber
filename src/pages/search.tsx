@@ -33,10 +33,10 @@ const Search: NextPage = () => {
         }
     );
 
-    const onContentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setContent(e.target.value);
+    const onContentChange = (content: string) => {
+        void router.push(`/search?q=${content}`);
 
-        if (e.target.value.length === 0) {
+        if (content.length === 0) {
             void posts.remove();
         }
     };
@@ -73,15 +73,7 @@ const Search: NextPage = () => {
             </Modal>
             <Topbar mobileOnly>
                 <NavButton />
-                <div className="ml-5 flex h-full grow py-1">
-                    <input
-                        className="h-full grow rounded-lg border-2 border-none bg-neutral-100 px-3.5 placeholder:text-neutral-600 focus:outline-none"
-                        type="text"
-                        placeholder="Search Gibber"
-                        value={content}
-                        onChange={onContentChange}
-                    />
-                </div>
+                <SearchInput autoFocus={true} onSearch={onContentChange} />
                 <Button
                     className="ml-3.5"
                     color="secondary"
