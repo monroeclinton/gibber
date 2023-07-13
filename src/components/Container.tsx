@@ -1,3 +1,6 @@
+import { useRouter } from "next/router";
+
+import { default as SearchInput } from "./input/Search";
 import SideNav from "./nav/Side";
 import Sidebar from "./Sidebar";
 
@@ -6,6 +9,8 @@ interface IContainerProps {
 }
 
 const Container: React.FC<IContainerProps> = ({ children }) => {
+    const router = useRouter();
+
     return (
         <div className="flex items-start justify-center">
             <SideNav
@@ -14,10 +19,10 @@ const Container: React.FC<IContainerProps> = ({ children }) => {
             />
             <div className="max-w-[615px] grow basis-[615px] md:shrink-0">
                 <div className="hidden h-[65px] lg:flex">
-                    <input
-                        className="my-3 grow rounded-lg border-2 border-none bg-neutral-100 px-3.5 placeholder:text-neutral-600 focus:outline-none"
-                        type="text"
-                        placeholder="Search Gibber"
+                    <SearchInput
+                        onSearch={(content) =>
+                            void router.push(`/search?q=${content}`)
+                        }
                     />
                 </div>
                 {children}
