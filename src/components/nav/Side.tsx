@@ -159,7 +159,7 @@ const Content: React.FC<{
             className={classNames(
                 "flex h-[45px] items-center justify-end rounded bg-gradient-to-r hover:from-neutral-100",
                 {
-                    "text-red-700": item.url === router.asPath,
+                    "text-red-700": item.url === router.pathname,
                 }
             )}
             href={item.url}
@@ -175,7 +175,7 @@ const Content: React.FC<{
             .map((item) => {
                 return item.url;
             })
-            .indexOf(router.asPath) * 45;
+            .indexOf(router.pathname) * 45;
 
     return (
         <Sidebar className={className} type={type}>
