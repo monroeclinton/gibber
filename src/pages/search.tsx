@@ -1,21 +1,27 @@
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { type NextPage } from "next";
 import Head from "next/head";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 import Button from "../components/button";
 import NavButton from "../components/button/NavButton";
 import Container from "../components/Container";
+import { default as SearchInput } from "../components/input/Search";
 import Modal from "../components/modal";
 import Posts from "../components/post/Posts";
 import Topbar from "../components/Topbar";
 import { api } from "../utils/api";
 
 const Search: NextPage = () => {
-    const [content, setContent] = useState<string>("");
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const content = searchParams.get("q") ?? "";
+
     const [username, setUsername] = useState<string>("");
     const [isFilterModalOpen, setFilterModalOpen] = useState<boolean>(false);
-    const isEnabled = content.length > 0 || username.length > 0;
+    const isEnabled = (content && content.length > 0) || username.length > 0;
 
     const posts = api.post.search.useQuery(
         {
