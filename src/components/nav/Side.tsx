@@ -215,6 +215,10 @@ const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
         "mb-4": type === "desktop",
     });
 
+    if (sessionStatus === "loading") {
+        return null;
+    }
+
     if (sessionStatus === "unauthenticated") {
         return (
             <div
