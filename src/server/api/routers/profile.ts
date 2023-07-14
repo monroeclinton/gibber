@@ -31,6 +31,17 @@ export const profileRouter = createTRPCRouter({
             include: profileInclude,
         });
     }),
+    getDiscover: publicProcedure.query(async ({ ctx }) => {
+        const take = 5;
+        const count = await ctx.prisma.profile.count();
+        const skip = count > take ? Math.floor(Math.random() * count) : 0;
+
+        return ctx.prisma.profile.findMany({
+            take,
+            skip,
+            include: profileInclude,
+        });
+    }),
     getByUsername: publicProcedure
         .input(
             z.object({
