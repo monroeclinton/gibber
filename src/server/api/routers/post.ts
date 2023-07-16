@@ -11,7 +11,7 @@ import type { Readable } from "stream";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
-import { env } from "../../../env/server.mjs";
+import { env } from "../../../env.mjs";
 import { type BasePost, type Post, postInclude } from "../../../types/post";
 import { parsePosts } from "../../../utils/activitypub";
 import { prisma } from "../../db";

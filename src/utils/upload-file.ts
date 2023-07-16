@@ -9,7 +9,7 @@ import probe from "probe-image-size";
 import type { Readable } from "stream";
 import { v4 as uuidv4 } from "uuid";
 
-import { env } from "../env/server.mjs";
+import { env } from "../env.mjs";
 import { s3Server } from "../server/s3";
 
 const uploadFile = async (

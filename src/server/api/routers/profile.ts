@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { env } from "../../../env/server.mjs";
+import { env } from "../../../env.mjs";
 import uploadFile from "../../../utils/upload-file";
 import {
     createTRPCRouter,

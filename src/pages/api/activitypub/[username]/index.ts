@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { env } from "../../../../env/server.mjs";
+import { env } from "../../../../env.mjs";
 import { prisma } from "../../../../server/db";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
