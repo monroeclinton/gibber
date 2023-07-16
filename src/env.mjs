@@ -23,6 +23,9 @@ export const env = createEnv({
         ),
         GITHUB_ID: z.string(),
         GITHUB_SECRET: z.string(),
+        NEXT_PUBLIC_REGISTRATION_ENABLED: z
+            .enum(["true", "false"])
+            .transform((value) => value === "true"),
         S3_WEB_ENDPOINT: z.string(),
         S3_CLIENT_ENDPOINT: z.string(),
         S3_SERVER_ENDPOINT: z.string(),
@@ -37,7 +40,11 @@ export const env = createEnv({
      *
      * 💡 You'll get type errors if these are not prefixed with NEXT_PUBLIC_.
      */
-    client: {},
+    client: {
+        NEXT_PUBLIC_REGISTRATION_ENABLED: z
+            .enum(["true", "false"])
+            .transform((value) => value === "true"),
+    },
 
     /*
      * Due to how Next.js bundles environment variables on Edge and Client,
@@ -53,7 +60,8 @@ export const env = createEnv({
         NEXTAUTH_URL: process.env.NEXTAUTH_URL,
         GITHUB_ID: process.env.GITHUB_ID,
         GITHUB_SECRET: process.env.GITHUB_SECRET,
-        NEXT_PUBLIC_REGISTRATION_ENABLED: process.env.REGISTRATION_ENABLED,
+        NEXT_PUBLIC_REGISTRATION_ENABLED:
+            process.env.NEXT_PUBLIC_REGISTRATION_ENABLED,
         S3_WEB_ENDPOINT: process.env.S3_WEB_ENDPOINT,
         S3_CLIENT_ENDPOINT: process.env.S3_CLIENT_ENDPOINT,
         S3_SERVER_ENDPOINT: process.env.S3_SERVER_ENDPOINT,
