@@ -165,7 +165,7 @@ const Content: React.FC<{
             href={item.url}
             key={"side-bar" + item.url + item.text}
         >
-            <p className="mr-6 text-xl md:hidden xl:block">{item.text}</p>
+            <p className="mr-6 text-xl md:hidden fd:block">{item.text}</p>
             <item.icon width={30} height={30} />
         </Link>
     ));
@@ -200,7 +200,11 @@ const Content: React.FC<{
                     )}
                     {items}
                 </div>
-                {type === "desktop" && <AuthCard type={type} />}
+                {type === "desktop" && (
+                    <div className="md:hidden fd:block">
+                        <AuthCard type={type} />
+                    </div>
+                )}
             </div>
         </Sidebar>
     );
