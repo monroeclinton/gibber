@@ -187,10 +187,10 @@ const Content: React.FC<{
                 />
             </Topbar>
             <div className="flex h-full flex-col px-8">
-                {type === "desktop" && (
-                    <Logo width={75} height={75} className="mt-12 self-end" />
-                )}
-                {type === "mobile" && <AuthCard type={type} />}
+                <div className="mt-12 self-end">
+                    {type === "desktop" && <Logo width={75} height={75} />}
+                    {type === "mobile" && <AuthCard />}
+                </div>
                 <div className="relative mt-16 grow">
                     {top >= 0 && (
                         <div
