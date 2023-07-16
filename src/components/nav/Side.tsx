@@ -1,4 +1,5 @@
 import {
+    ArrowRightOnRectangleIcon,
     BellIcon,
     ChevronUpDownIcon,
     Cog6ToothIcon,
@@ -201,8 +202,23 @@ const Content: React.FC<{
                     {items}
                 </div>
                 {type === "desktop" && (
-                    <div className="md:hidden fd:block">
-                        <AuthCard type={type} />
+                    <div className="mb-4">
+                        <div className="md:hidden fd:block">
+                            <AuthCard />
+                        </div>
+                        <div className="fd:hidden">
+                            <Button
+                                iconOnly
+                                color="secondary"
+                                className="ml-auto"
+                                onClick={() => void signIn()}
+                            >
+                                <ArrowRightOnRectangleIcon
+                                    width={30}
+                                    height={30}
+                                />
+                            </Button>
+                        </div>
                     </div>
                 )}
             </div>
