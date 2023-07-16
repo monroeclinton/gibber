@@ -9,6 +9,12 @@ import { prisma } from "../../../server/db";
 export const authOptions: NextAuthOptions = {
     // Include user.id on session
     callbacks: {
+        signIn({ user }) {
+            return (
+                env.NEXT_PUBLIC_REGISTRATION_ENABLED ||
+                Boolean(user.role !== undefined)
+            );
+        },
         session({ session, user }) {
             if (session.user) {
                 session.user.id = user.id;
