@@ -25,6 +25,7 @@ import {
 
 import Logo from "../../../assets/gibber.svg";
 import { navOpenAtom } from "../../atoms";
+import { env } from "../../env.mjs";
 import { clearProfileId, useProfile } from "../../utils/use-profile";
 import Button from "../button";
 import CloseButton from "../button/CloseButton";
@@ -239,14 +240,27 @@ const AuthCard: React.FC = () => {
         return (
             <div className="flex-col rounded border-2 border-neutral-100 px-6 py-5">
                 <p className="text-xl font-semibold">Welcome to Gibber!</p>
-                <div className="mt-3.5 flex gap-2">
-                    <Button onClick={() => void signIn()}>Sign In</Button>
+                <div
+                    className={classNames("mt-3.5 flex", {
+                        "gap-2": env.NEXT_PUBLIC_REGISTRATION_ENABLED,
+                    })}
+                >
                     <Button
-                        color="primary-outline"
                         onClick={() => void signIn()}
+                        className={classNames({
+                            grow: !env.NEXT_PUBLIC_REGISTRATION_ENABLED,
+                        })}
                     >
-                        Register
+                        Sign In
                     </Button>
+                    {env.NEXT_PUBLIC_REGISTRATION_ENABLED && (
+                        <Button
+                            color="primary-outline"
+                            onClick={() => void signIn()}
+                        >
+                            Register
+                        </Button>
+                    )}
                 </div>
             </div>
         );
