@@ -210,14 +210,10 @@ const Content: React.FC<{
     );
 };
 
-const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
+const AuthCard: React.FC = () => {
     const { status: sessionStatus } = useSession();
 
     const { profile } = useProfile();
-
-    const className = classNames("flex", {
-        "mb-4": type === "desktop",
-    });
 
     if (sessionStatus === "loading") {
         return null;
@@ -225,12 +221,7 @@ const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
 
     if (sessionStatus === "unauthenticated") {
         return (
-            <div
-                className={classNames(
-                    className,
-                    "flex-col rounded border-2 border-neutral-100 px-6 py-5"
-                )}
-            >
+            <div className="flex-col rounded border-2 border-neutral-100 px-6 py-5">
                 <p className="text-xl font-semibold">Welcome to Gibber!</p>
                 <div className="mt-3.5 flex gap-2">
                     <Button onClick={() => void signIn()}>Sign In</Button>
@@ -247,10 +238,7 @@ const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
 
     return (
         <div
-            className={classNames(
-                className,
-                "flex-col rounded bg-gradient-to-r p-2 hover:cursor-pointer hover:from-neutral-100"
-            )}
+            className="flex-col rounded bg-gradient-to-r p-2 hover:cursor-pointer hover:from-neutral-100"
             onClick={() => clearProfileId()}
         >
             <div className="flex items-center justify-end">
