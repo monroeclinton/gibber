@@ -18,7 +18,6 @@ const Container: React.FC<IContainerProps> = ({ children }) => {
 
     const discover = api.profile.getDiscover.useQuery();
 
-    console.log(discover.data);
     const people = discover.data?.map((profile) => (
         <Link href={`/${profile.username}`} key={profile.id}>
             <div className="mt-4 flex">
