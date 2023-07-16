@@ -233,12 +233,9 @@ const AuthCard: React.FC<{ type: "mobile" | "desktop" }> = ({ type }) => {
             >
                 <p className="text-xl font-semibold">Welcome to Gibber!</p>
                 <div className="mt-3.5 flex gap-2">
-                    <Button className="w-1/2" onClick={() => void signIn()}>
-                        Sign In
-                    </Button>
+                    <Button onClick={() => void signIn()}>Sign In</Button>
                     <Button
                         color="primary-outline"
-                        className="w-1/2"
                         onClick={() => void signIn()}
                     >
                         Register
