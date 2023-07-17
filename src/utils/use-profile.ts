@@ -25,7 +25,7 @@ export const getProfileId = () => {
 };
 
 export const useProfile = () => {
-    const [id, setId] = useState<string | null>(getProfileId());
+    const [id, setId] = useState<string | null>(null);
 
     const profile = api.profile.getById.useQuery(
         {
@@ -42,6 +42,8 @@ export const useProfile = () => {
     }
 
     useEffect(() => {
+        setId(getProfileId());
+
         const setProfile = () => {
             const profileId = getProfileId();
 
