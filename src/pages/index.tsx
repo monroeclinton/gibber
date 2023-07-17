@@ -1,4 +1,3 @@
-import { type NextPage } from "next";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 
@@ -6,10 +5,11 @@ import NavButton from "../components/button/NavButton";
 import Container from "../components/Container";
 import Posts from "../components/post/Posts";
 import Topbar from "../components/Topbar";
+import type { GibberPage } from "../types/next";
 import { api } from "../utils/api";
 import { useProfile } from "../utils/use-profile";
 
-const Home: NextPage = () => {
+const Home: GibberPage = () => {
     const { id: profileId } = useProfile();
 
     const { status: sessionStatus } = useSession();

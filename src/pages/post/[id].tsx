@@ -1,4 +1,3 @@
-import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -8,9 +7,10 @@ import Post from "../../components/post";
 import CreatePost from "../../components/post/create";
 import Spinner from "../../components/Spinner";
 import Topbar from "../../components/Topbar";
+import type { GibberPage } from "../../types/next";
 import { api } from "../../utils/api";
 
-const PostPage: NextPage = () => {
+const PostPage: GibberPage = () => {
     const router = useRouter();
 
     const post = api.post.getById.useQuery(

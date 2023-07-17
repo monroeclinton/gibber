@@ -1,8 +1,7 @@
-import { type NextPage } from "next";
-
 import Profile from "../../components/profile";
+import type { GibberPage } from "../../types/next";
 
-const ProfilePage: NextPage = () => {
+const ProfilePage: GibberPage = () => {
     return <Profile />;
 };
 

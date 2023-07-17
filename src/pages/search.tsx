@@ -1,5 +1,4 @@
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import { type NextPage } from "next";
 import Head from "next/head";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
@@ -12,9 +11,10 @@ import { default as SearchInput } from "../components/input/Search";
 import Modal from "../components/modal";
 import Posts from "../components/post/Posts";
 import Topbar from "../components/Topbar";
+import type { GibberPage } from "../types/next";
 import { api } from "../utils/api";
 
-const Search: NextPage = () => {
+const Search: GibberPage = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const content = searchParams.get("q") ?? "";
