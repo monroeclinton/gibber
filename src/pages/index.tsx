@@ -7,10 +7,11 @@ import Container from "../components/Container";
 import Posts from "../components/post/Posts";
 import Topbar from "../components/Topbar";
 import { api } from "../utils/api";
-import { getProfileId } from "../utils/use-profile";
+import { useProfile } from "../utils/use-profile";
 
 const Home: NextPage = () => {
-    const profileId = getProfileId();
+    const { id: profileId } = useProfile();
+
     const { status: sessionStatus } = useSession();
     const unauthenticated = sessionStatus === "unauthenticated";
 
