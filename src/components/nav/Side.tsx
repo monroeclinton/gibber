@@ -41,7 +41,12 @@ const defaultClassName = `
     z-10
 `;
 
-type HeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
+type HeroIcon = React.ComponentType<
+    React.PropsWithoutRef<React.ComponentProps<"svg">> & {
+        title?: string | undefined;
+        titleId?: string | undefined;
+    }
+>;
 
 interface INavItem {
     url: string;
