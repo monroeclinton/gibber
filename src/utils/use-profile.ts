@@ -52,7 +52,7 @@ export const useProfile = () => {
 
         window.addEventListener("storage", setProfile);
 
-        return () => window.addEventListener("storage", setProfile);
+        return () => window.removeEventListener("storage", setProfile);
     }, [profile]);
 
     return { id, profile };
