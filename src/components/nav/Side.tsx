@@ -190,7 +190,11 @@ const Content: React.FC<{
             </Topbar>
             <div className="flex h-full flex-col px-8">
                 <div className="mt-12 self-end">
-                    {type === "desktop" && <Logo width={75} height={75} />}
+                    {type === "desktop" && (
+                        <Link href="/">
+                            <Logo width={75} height={75} />
+                        </Link>
+                    )}
                     {type === "mobile" && <AuthCard />}
                 </div>
                 <div className="relative mt-16 grow">
