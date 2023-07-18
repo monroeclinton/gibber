@@ -17,7 +17,7 @@ import { useProfile } from "../../utils/use-profile";
 import Button from "../button";
 
 const defaultClassName =
-    "lg:hidden fixed left-6 right-6 bottom-4 left-1/2 w-[330px] -translate-x-1/2";
+    "lg:hidden fixed bottom-4 left-1/2 right-1/2 w-[330px] -translate-x-1/2";
 
 const Bottom: React.FC = () => {
     const { status: sessionStatus } = useSession();
@@ -106,7 +106,7 @@ const AuthedBar = () => {
             <Button
                 color="secondary"
                 iconOnly
-                className="absolute left-1/2 -top-[25px] h-[50px] w-[50px] -translate-x-1/2 border border-neutral-300"
+                className="absolute -top-[25px] left-1/2 h-[50px] w-[50px] -translate-x-1/2 border border-neutral-300"
                 onClick={() => setCreatePost(true)}
             >
                 <PencilIcon width={28} height={28} />
