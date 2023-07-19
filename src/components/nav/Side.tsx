@@ -205,7 +205,7 @@ const Content: React.FC<{
                 <div className="relative mt-16 grow">
                     {top >= 0 && (
                         <div
-                            className="absolute top-[138px] -right-8 h-[45px] rounded border-r-2 border-red-700"
+                            className="absolute -right-8 top-[138px] h-[45px] rounded border-r-2 border-red-700"
                             style={{ top: top.toString() + "px" }}
                         />
                     )}
@@ -217,17 +217,29 @@ const Content: React.FC<{
                             <AuthCard />
                         </div>
                         <div className="fd:hidden">
-                            <Button
-                                iconOnly
-                                color="secondary"
-                                className="ml-auto"
-                                onClick={() => void signIn()}
-                            >
-                                <ArrowRightOnRectangleIcon
-                                    width={30}
-                                    height={30}
-                                />
-                            </Button>
+                            {sessionStatus === "unauthenticated" && (
+                                <Button
+                                    iconOnly
+                                    color="secondary"
+                                    className="ml-auto"
+                                    onClick={() => void signIn()}
+                                >
+                                    <ArrowRightOnRectangleIcon
+                                        width={30}
+                                        height={30}
+                                    />
+                                </Button>
+                            )}
+                            {sessionStatus === "authenticated" && (
+                                <Button
+                                    iconOnly
+                                    color="secondary"
+                                    className="ml-auto"
+                                    onClick={() => clearProfileId()}
+                                >
+                                    <UserIcon width={30} height={30} />
+                                </Button>
+                            )}
                         </div>
                     </div>
                 )}
