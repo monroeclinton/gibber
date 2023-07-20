@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
+import { Tooltip } from "react-tooltip";
 import { Transition } from "react-transition-group";
 import {
     ENTERED,
@@ -259,7 +260,16 @@ const AuthCard: React.FC = () => {
 
     if (sessionStatus === "unauthenticated") {
         return (
-            <div className="flex-col rounded border-2 border-neutral-100 px-6 py-5">
+            <div
+                className="flex-col rounded border-2 border-neutral-100 px-6 py-5"
+                data-tooltip-id="register-tooltip"
+            >
+                <Tooltip
+                    hidden={env.NEXT_PUBLIC_REGISTRATION_ENABLED === true}
+                    id="register-tooltip"
+                >
+                    Registration is disabled.
+                </Tooltip>
                 <p className="text-xl font-semibold">Welcome to Gibber!</p>
                 <div
                     className={classNames("mt-3.5 flex", {
