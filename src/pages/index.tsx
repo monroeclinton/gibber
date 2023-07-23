@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 
 import NavButton from "../components/button/NavButton";
 import Container from "../components/Container";
+import CreatePost from "../components/post/create";
 import Posts from "../components/post/Posts";
 import Topbar from "../components/Topbar";
 import type { GibberPage } from "../types/next";
@@ -28,6 +29,11 @@ const Home: GibberPage = () => {
         enabled: unauthenticated,
     });
 
+    const onReply = async () => {
+        await feedPosts.refetch();
+        await publicPosts.refetch();
+    };
+
     return (
         <>
             <Head>
@@ -43,6 +49,9 @@ const Home: GibberPage = () => {
                 <p className="ml-5 font-semibold">Latest Posts</p>
             </Topbar>
             <Container>
+                <div className="mb-4 hidden lg:block">
+                    <CreatePost onPost={() => void onReply()} />
+                </div>
                 <Posts posts={unauthenticated ? publicPosts : feedPosts} />
             </Container>
         </>
