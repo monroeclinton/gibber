@@ -230,15 +230,23 @@ const Post: React.FC<{
                     </div>
                 </Link>
                 <div className="ml-3.5 flex flex-col justify-center self-center">
-                    <Link
-                        className="hover:underline"
-                        href={`/${post.profile.username}`}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {post.profile.username}
-                    </Link>
+                    <p>
+                        <Link
+                            className="hover:underline"
+                            href={`/${post.profile.username}`}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {post.profile.username}
+                        </Link>
+                    </p>
                     <p className="text-sm">
-                        {post.createdAt.toLocaleDateString()}
+                        <Link
+                            className="hover:underline"
+                            href={`/post/${post.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {post.createdAt.toLocaleDateString()}
+                        </Link>
                     </p>
                 </div>
                 <div
