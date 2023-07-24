@@ -25,7 +25,7 @@ import {
 } from "react-transition-group/Transition";
 
 import Logo from "../../../assets/gibber.svg";
-import { navOpenAtom } from "../../atoms";
+import { createPostAtom, navOpenAtom } from "../../atoms";
 import { env } from "../../env.mjs";
 import { clearProfileId, useProfile } from "../../utils/use-profile";
 import Button from "../button";
@@ -118,6 +118,7 @@ const Content: React.FC<{
     const router = useRouter();
     const { status: sessionStatus } = useSession();
     const [, setNavOpen] = useAtom(navOpenAtom);
+    const [, setCreatePost] = useAtom(createPostAtom);
 
     const className = classNames(props.className, {
         [defaultClassName]: type === "mobile",
@@ -211,6 +212,15 @@ const Content: React.FC<{
                         />
                     )}
                     {items}
+                    <div className="mt-4 md:hidden lg:block">
+                        <Button
+                            color="secondary"
+                            className="w-full"
+                            onClick={() => setCreatePost(true)}
+                        >
+                            Post
+                        </Button>
+                    </div>
                 </div>
                 {type === "desktop" && (
                     <div className="mb-4">
