@@ -174,7 +174,7 @@ const Content: React.FC<{
             href={item.url}
             key={"side-bar" + item.url + item.text}
         >
-            <p className="mr-6 text-xl md:hidden fd:block">{item.text}</p>
+            <p className="mr-6 text-xl lg:hidden fd:block">{item.text}</p>
             <item.icon width={30} height={30} />
         </Link>
     ));
@@ -212,7 +212,7 @@ const Content: React.FC<{
                         />
                     )}
                     {items}
-                    <div className="mt-4 md:hidden lg:block">
+                    <div className="mt-4 hidden lg:block">
                         <Button
                             color="secondary"
                             className="w-full"
