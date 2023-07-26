@@ -16,6 +16,14 @@ const config = {
     images: {
         domains: ["avatars.githubusercontent.com", "gibber.localhost"],
     },
+    async rewrites() {
+        return [
+            {
+                source: "/.well-known/:path*",
+                destination: "/api/.well-known/:path*",
+            },
+        ];
+    },
     webpack(config) {
         config.module.rules.push({
             test: /\.svg$/,
