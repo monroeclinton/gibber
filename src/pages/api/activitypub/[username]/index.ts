@@ -24,6 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         username: profile.username,
         summary: profile.summary,
         outbox: `${env.WEB_URL}/api/activitypub/${profile.username}/outbox`,
+        published: profile.createdAt,
         ...(profile.avatar && {
             icon: {
                 type: "Image",
