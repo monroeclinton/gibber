@@ -19,8 +19,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         name: profile.name,
         username: profile.username,
         summary: profile.summary,
-        followersCount: profile.followersCount,
-        followingCount: profile.followingCount,
         outbox: `${env.WEB_URL}/api/activitypub/${profile.username}/outbox`,
     });
 };
