@@ -29,13 +29,13 @@ const Container: React.FC<IContainerProps> = ({ children }) => {
                         }
                     )}
                 >
-                    {!profile.header && (
+                    {!profile.avatar && (
                         <UserIcon className="m-[25%] w-1/2 text-neutral-400" />
                     )}
-                    {profile.header && (
+                    {profile.avatar && (
                         <Image
                             alt="Person's header"
-                            src={profile.header.url}
+                            src={profile.avatar.url}
                             width={615}
                             height={205}
                         />
