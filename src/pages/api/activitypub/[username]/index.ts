@@ -10,6 +10,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         where: {
             username: username as string,
         },
+        include: {
+            avatar: true,
+            header: true,
+        },
     });
 
     res.status(200).json({
@@ -20,6 +24,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         username: profile.username,
         summary: profile.summary,
         outbox: `${env.WEB_URL}/api/activitypub/${profile.username}/outbox`,
+        ...(profile.avatar && {
+            icon: {
+                type: "Image",
+                mediaType: profile.avatar.mime,
+                url: profile.avatar.url,
+            },
+        }),
+        ...(profile.header && {
+            image: {
+                type: "Image",
+                mediaType: profile.header.mime,
+                url: profile.header.url,
+            },
+        }),
     });
 };
 
