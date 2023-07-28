@@ -112,6 +112,7 @@ model Profile {
     avatarId          String?
     avatar            File?           @relation(name: "AvatarFile", fields: [avatarId], references: [id], onDelete: Cascade)
     name              String
+    domain            String
     username          String          @unique
     summary           String?
     followingCount    Int             @default(0)
