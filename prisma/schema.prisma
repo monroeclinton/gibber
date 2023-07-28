@@ -105,8 +105,8 @@ model Profile {
     posts             Post[]
     notified          Notification[]  @relation(name: "NotifiedNotification")
     notifier          Notification[]  @relation(name: "NotifierNotification")
-    userId            String
-    user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId            String?
+    user              User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
     headerId          String?
     header            File?           @relation(name: "HeaderFile", fields: [headerId], references: [id], onDelete: Cascade)
     avatarId          String?
