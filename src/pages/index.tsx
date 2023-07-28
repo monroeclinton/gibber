@@ -49,9 +49,11 @@ const Home: GibberPage = () => {
                 <p className="ml-5 font-semibold">Latest Posts</p>
             </Topbar>
             <Container>
-                <div className="mb-4 hidden lg:block">
-                    <CreatePost onPost={() => void onReply()} />
-                </div>
+                {sessionStatus === "authenticated" && (
+                    <div className="mb-4 hidden lg:block">
+                        <CreatePost onPost={() => void onReply()} />
+                    </div>
+                )}
                 <Posts posts={unauthenticated ? publicPosts : feedPosts} />
             </Container>
         </>
