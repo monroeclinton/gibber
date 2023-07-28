@@ -331,6 +331,7 @@ export const profileRouter = createTRPCRouter({
                 name: input.name,
                 username: input.username,
                 summary: input.summary,
+                domain: env.WEB_DOMAIN,
             };
 
             return ctx.prisma.profile.upsert({
