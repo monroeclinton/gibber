@@ -196,7 +196,8 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
                                         {profile.data.name}
                                     </p>
                                     <p className="overflow-hidden text-ellipsis">
-                                        {profile.data.username}@localhost:3000
+                                        {profile.data.username}@
+                                        {profile.data.domain}
                                     </p>
                                 </div>
                             </div>

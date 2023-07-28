@@ -44,8 +44,7 @@ const Container: React.FC<IContainerProps> = ({ children }) => {
                 <div className="ml-4 min-w-0">
                     <p className="text-lg">{profile.name}</p>
                     <p className="overflow-hidden text-ellipsis">
-                        {profile.username}
-                        @localhost:3000
+                        {profile.username}@{profile.domain}
                     </p>
                 </div>
             </div>
