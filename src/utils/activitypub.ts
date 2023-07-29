@@ -26,7 +26,25 @@ type ActorResponse = {
     };
 };
 
-export const fetchRemoteProfile = async (username: string, domain: string) => {
+type OutboxResponse = {
+    first: string;
+};
+
+type OutboxPageResponse = {
+    orderedItems: Array<{
+        object: {
+            id: string;
+            attributedTo: string;
+            content: string;
+            published: string;
+        };
+    }>;
+};
+
+const fetchRemoteActor = async (
+    username: string,
+    domain: string
+): Promise<ActorResponse> => {
     const address = `${username}@${domain}`;
 
     // TODO: Make HTTPS
@@ -51,12 +69,17 @@ export const fetchRemoteProfile = async (username: string, domain: string) => {
         },
     });
 
-    const actor = (await actorResponse.json()) as ActorResponse;
+    return (await actorResponse.json()) as ActorResponse;
+};
+
+export const fetchRemoteProfile = async (username: string, domain: string) => {
+    const actor = await fetchRemoteActor(username, domain);
 
     // TODO: Clean up and persist profile
     return {
         isFollowing: false,
-        id: actor.id,
+        // TODO: Use proper actor id by having getByProfileId support it
+        id: `${username}@${domain}`,
         userId: null,
         headerId: null,
         avatarId: null,
@@ -77,11 +100,48 @@ export const fetchRemoteProfile = async (username: string, domain: string) => {
     };
 };
 
-const postActivity = zod.array(
-    zod.object({
-        object: PostWithRelationsSchema,
-    })
-);
+export const fetchRemotePosts = async (username: string, domain: string) => {
+    const actor = await fetchRemoteActor(username, domain);
+
+    const outboxResponse = await fetch(actor.outbox, {
+        headers: {
+            Accept: "application/activity+json",
+        },
+    });
+
+    const outbox = (await outboxResponse.json()) as OutboxResponse;
+
+    const outboxPageResponse = await fetch(outbox.first, {
+        headers: {
+            Accept: "application/activity+json",
+        },
+    });
+
+    const outboxPage = (await outboxPageResponse.json()) as OutboxPageResponse;
+
+    const profile = await fetchRemoteProfile(username, domain);
+
+    const posts = [];
+    for (const item of outboxPage.orderedItems) {
+        // TODO: Clean up and post
+        posts.push({
+            isReblogged: false,
+            isFavorited: false,
+            id: item.object.id,
+            profileId: item.object.attributedTo,
+            inReplyToId: null,
+            reblogId: null,
+            content: item.object.content,
+            repliesCount: 0,
+            reblogsCount: 0,
+            favoritesCount: 0,
+            createdAt: new Date(item.object.published),
+            updatedAt: new Date(item.object.published),
+            profile,
+            attachments: [],
+            reblog: null,
+        });
+    }
 
 export const parsePosts = (json: unknown): Post[] => {
     const activities = postActivity.parse(json);
