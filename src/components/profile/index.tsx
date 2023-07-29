@@ -153,7 +153,7 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
                 )}
                 {profile.data && (
                     <div>
-                        <div className="aspect-w-3 aspect-h-1 bg-neutral-200">
+                        <div className="aspect-h-1 aspect-w-3 bg-neutral-200">
                             {profile.data.header && (
                                 <Image
                                     alt="Person's header"
