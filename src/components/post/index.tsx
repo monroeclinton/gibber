@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/24/solid";
 import type { Profile } from "@prisma/client";
 import classNames from "classnames";
+import * as DOMPurify from "dompurify";
 import { useAtom } from "jotai";
 import Image from "next/image";
 import Link from "next/link";
@@ -277,7 +278,11 @@ const Post: React.FC<{
             </div>
             {post.content && (
                 <div className="mt-3.5">
-                    <p>{post.content}</p>
+                    <div
+                        dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(post.content),
+                        }}
+                    />
                 </div>
             )}
             {post.attachments.length > 0 && (
