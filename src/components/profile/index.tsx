@@ -1,5 +1,6 @@
 import { UserIcon } from "@heroicons/react/24/solid";
 import className from "classnames";
+import * as DOMPurify from "dompurify";
 import { useAtom } from "jotai";
 import Head from "next/head";
 import Image from "next/image";
@@ -239,7 +240,15 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
                             )}
                             {profile.data.summary && (
                                 <div className="mt-4">
-                                    <p>{profile.data.summary}</p>
+                                    {
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: DOMPurify.sanitize(
+                                                    profile.data.summary
+                                                ),
+                                            }}
+                                        />
+                                    }
                                 </div>
                             )}
                             <div className="mt-3.5 flex">
