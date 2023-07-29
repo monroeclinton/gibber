@@ -17,6 +17,7 @@ type ActorResponse = {
     summary: string;
     published: string;
     preferredUsername: string;
+    outbox: string;
     icon?: {
         url: string;
     };
