@@ -156,6 +156,7 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
                         <div className="aspect-h-1 aspect-w-3 bg-neutral-200">
                             {profile.data.header && (
                                 <Image
+                                    className="object-cover"
                                     alt="Person's header"
                                     src={profile.data.header.url}
                                     width={615}
