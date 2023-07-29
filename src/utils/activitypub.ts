@@ -1,8 +1,3 @@
-import zod from "zod";
-
-import { PostWithRelationsSchema } from "../../prisma/generated/zod";
-import { type Post } from "../types/post";
-
 type WebFingerResponse = {
     links?: Array<{
         rel?: string;
@@ -143,7 +138,5 @@ export const fetchRemotePosts = async (username: string, domain: string) => {
         });
     }
 
-export const parsePosts = (json: unknown): Post[] => {
-    const activities = postActivity.parse(json);
-    return activities.map((activity) => activity.object as Post);
+    return posts;
 };
