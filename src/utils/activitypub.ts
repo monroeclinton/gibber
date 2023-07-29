@@ -52,6 +52,7 @@ export const fetchRemoteProfile = async (username: string, domain: string) => {
 
     const actor = (await actorResponse.json()) as ActorResponse;
 
+    // TODO: Clean up and persist profile
     return {
         isFollowing: false,
         id: actor.id,
