@@ -111,7 +111,7 @@ export const postRouter = createTRPCRouter({
             })
         )
         .query(async ({ ctx, input }) => {
-            if (input.id.includes("")) {
+            if (input.id.includes("@")) {
                 const [username, domain] = input.id.split("@");
 
                 return await fetchRemotePosts(
