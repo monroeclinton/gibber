@@ -56,9 +56,12 @@ export const profileRouter = createTRPCRouter({
                 return fetchRemoteProfile(username as string, domain as string);
             }
 
-            const profile = await ctx.prisma.profile.findFirst({
+            const profile = await ctx.prisma.profile.findUnique({
                 where: {
-                    username: input.username,
+                    username_domain: {
+                        username: input.username,
+                        domain: env.WEB_DOMAIN,
+                    },
                 },
                 include: profileInclude,
             });
@@ -95,7 +98,7 @@ export const profileRouter = createTRPCRouter({
             })
         )
         .query(async ({ ctx, input }) => {
-            const profile = await ctx.prisma.profile.findFirst({
+            const profile = await ctx.prisma.profile.findUnique({
                 where: {
                     id: input.id,
                 },
@@ -255,9 +258,12 @@ export const profileRouter = createTRPCRouter({
 
             // TODO: transaction/better verification
             const hasPermission = await ctx.prisma.profile
-                .findFirst({
+                .findUnique({
                     where: {
-                        username: input.username,
+                        username_domain: {
+                            username: input.username,
+                            domain: env.WEB_DOMAIN,
+                        },
                     },
                 })
                 .then((r) => r === null || r.userId === session.user.id);
@@ -331,7 +337,10 @@ export const profileRouter = createTRPCRouter({
 
             return ctx.prisma.profile.upsert({
                 where: {
-                    username: input.username,
+                    username_domain: {
+                        username: input.username,
+                        domain: env.WEB_DOMAIN,
+                    },
                 },
                 update: data,
                 create: data,

@@ -112,8 +112,8 @@ model Profile {
     avatarId          String?
     avatar            File?           @relation(name: "AvatarFile", fields: [avatarId], references: [id], onDelete: Cascade)
     name              String
+    username          String
     domain            String
-    username          String          @unique
     summary           String?
     followingCount    Int             @default(0)
     followersCount    Int             @default(0)
@@ -122,6 +122,8 @@ model Profile {
     favorites         Favorite[]
     createdAt         DateTime        @default(now())
     updatedAt         DateTime        @updatedAt
+
+    @@unique([username, domain])
 }
 
 // Necessary for Next auth
