@@ -13,7 +13,7 @@ import { z } from "zod";
 
 import { env } from "../../../env.mjs";
 import { type BasePost, type Post, postInclude } from "../../../types/post";
-import { fetchRemotePosts } from "../../../utils/activitypub";
+import { upsertRemotePosts } from "../../../utils/activitypub";
 import { prisma } from "../../db";
 import { s3Client, s3Server } from "../../s3";
 import {
@@ -114,7 +114,7 @@ export const postRouter = createTRPCRouter({
             if (input.id.includes("@")) {
                 const [username, domain] = input.id.split("@");
 
-                return await fetchRemotePosts(
+                return await upsertRemotePosts(
                     username as string,
                     domain as string
                 );

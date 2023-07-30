@@ -1,12 +1,11 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { TRPCError } from "@trpc/server";
 import probe from "probe-image-size";
-import type { Readable } from "stream";
 import { v4 as uuidv4 } from "uuid";
 
 import { env } from "../env.mjs";
 import { prisma } from "../server/db";
 import { s3Server } from "../server/s3";
+import { postInclude } from "../types/post";
 
 type WebFingerResponse = {
     links?: Array<{
@@ -194,7 +193,7 @@ export const upsertRemoteProfile = async (username: string, domain: string) => {
     });
 };
 
-export const fetchRemotePosts = async (username: string, domain: string) => {
+export const upsertRemotePosts = async (username: string, domain: string) => {
     const actor = await fetchRemoteActor(username, domain);
 
     const outboxResponse = await fetch(actor.outbox, {
@@ -217,24 +216,25 @@ export const fetchRemotePosts = async (username: string, domain: string) => {
 
     const posts = [];
     for (const item of outboxPage.orderedItems) {
-        // TODO: Clean up and post
-        posts.push({
-            isReblogged: false,
-            isFavorited: false,
+        const data = {
             id: item.object.id,
-            profileId: item.object.attributedTo,
-            inReplyToId: null,
-            reblogId: null,
+            profileId: profile.id,
             content: item.object.content,
-            repliesCount: 0,
-            reblogsCount: 0,
-            favoritesCount: 0,
             createdAt: new Date(item.object.published),
             updatedAt: new Date(item.object.published),
-            profile,
-            attachments: [],
-            reblog: null,
+        };
+
+        // TODO: Bulk upsert
+        const post = await prisma.post.upsert({
+            where: {
+                id: data.id,
+            },
+            update: data,
+            create: data,
+            include: postInclude,
         });
+
+        posts.push(post);
     }
 
     return posts;
