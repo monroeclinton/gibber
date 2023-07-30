@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { env } from "../../../env.mjs";
-import { fetchRemoteProfile } from "../../../utils/activitypub";
+import { upsertRemoteProfile } from "../../../utils/activitypub";
 import uploadFile from "../../../utils/upload-file";
 import {
     createTRPCRouter,
@@ -53,7 +53,10 @@ export const profileRouter = createTRPCRouter({
             if (input.username.includes("@")) {
                 const [username, domain] = input.username.split("@");
 
-                return fetchRemoteProfile(username as string, domain as string);
+                return upsertRemoteProfile(
+                    username as string,
+                    domain as string
+                );
             }
 
             const profile = await ctx.prisma.profile.findUnique({

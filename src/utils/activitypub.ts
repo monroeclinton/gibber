@@ -1,3 +1,13 @@
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { TRPCError } from "@trpc/server";
+import probe from "probe-image-size";
+import type { Readable } from "stream";
+import { v4 as uuidv4 } from "uuid";
+
+import { env } from "../env.mjs";
+import { prisma } from "../server/db";
+import { s3Server } from "../server/s3";
+
 type WebFingerResponse = {
     links?: Array<{
         rel?: string;
@@ -67,32 +77,121 @@ const fetchRemoteActor = async (
     return (await actorResponse.json()) as ActorResponse;
 };
 
-export const fetchRemoteProfile = async (username: string, domain: string) => {
+export const upsertRemoteProfile = async (username: string, domain: string) => {
+    const profile = await prisma.profile.findUnique({
+        where: {
+            username_domain: {
+                username,
+                domain,
+            },
+        },
+        include: {
+            avatar: true,
+            header: true,
+        },
+    });
+
+    if (profile) {
+        return profile;
+    }
+
     const actor = await fetchRemoteActor(username, domain);
 
-    // TODO: Clean up and persist profile
-    return {
-        isFollowing: false,
+    // TODO: Remove duplicated code by creating a function to upload files to S3
+    let header = {};
+    if (actor.image) {
+        const image = await fetch(actor.image.url);
+        const body = await image.arrayBuffer();
+        const type = await probe(actor.image.url);
+        const uuid = uuidv4();
+        const name = uuid + "." + type.type;
+
+        await s3Server.send(
+            new PutObjectCommand({
+                Body: Buffer.from(body),
+                Bucket: env.S3_BUCKET,
+                Key: name,
+            })
+        );
+
+        const file = await prisma.file.create({
+            data: {
+                type: "IMAGE",
+                url: env.S3_WEB_ENDPOINT + "/" + name,
+                mime: type.mime,
+                extension: type.type,
+                name,
+                size: body.byteLength,
+                width: type.height,
+                height: type.width,
+            },
+        });
+
+        header = {
+            headerId: file.id,
+        };
+    }
+
+    let avatar = {};
+    if (actor.icon) {
+        const image = await fetch(actor.icon.url);
+        const body = await image.arrayBuffer();
+        const type = await probe(actor.icon.url);
+        const uuid = uuidv4();
+        const name = uuid + "." + type.type;
+
+        await s3Server.send(
+            new PutObjectCommand({
+                Body: Buffer.from(body),
+                Bucket: env.S3_BUCKET,
+                Key: name,
+            })
+        );
+
+        const file = await prisma.file.create({
+            data: {
+                type: "IMAGE",
+                url: env.S3_WEB_ENDPOINT + "/" + name,
+                mime: type.mime,
+                extension: type.type,
+                name,
+                size: body.byteLength,
+                width: type.height,
+                height: type.width,
+            },
+        });
+
+        avatar = {
+            avatarId: file.id,
+        };
+    }
+
+    const data = {
         // TODO: Use proper actor id by having getByProfileId support it
+        ...header,
+        ...avatar,
         id: `${username}@${domain}`,
-        userId: null,
-        headerId: null,
-        avatarId: null,
         name: actor.name,
         domain: domain,
         username: actor.preferredUsername,
         summary: actor.summary,
-        followingCount: 0,
-        followersCount: 0,
         createdAt: new Date(actor.published),
-        updatedAt: null,
-        header: actor.image && {
-            url: actor.image.url,
-        },
-        avatar: actor.icon && {
-            url: actor.icon?.url,
-        },
     };
+
+    return await prisma.profile.upsert({
+        where: {
+            username_domain: {
+                username,
+                domain,
+            },
+        },
+        update: data,
+        create: data,
+        include: {
+            avatar: true,
+            header: true,
+        },
+    });
 };
 
 export const fetchRemotePosts = async (username: string, domain: string) => {
@@ -114,7 +213,7 @@ export const fetchRemotePosts = async (username: string, domain: string) => {
 
     const outboxPage = (await outboxPageResponse.json()) as OutboxPageResponse;
 
-    const profile = await fetchRemoteProfile(username, domain);
+    const profile = await upsertRemoteProfile(username, domain);
 
     const posts = [];
     for (const item of outboxPage.orderedItems) {
