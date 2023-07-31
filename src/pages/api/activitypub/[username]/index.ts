@@ -8,7 +8,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const profile = await prisma.profile.findUniqueOrThrow({
         where: {
-            username: username as string,
+            username_domain: {
+                username: username as string,
+                domain: env.WEB_URL,
+            },
         },
         include: {
             avatar: true,
