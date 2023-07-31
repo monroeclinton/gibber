@@ -41,7 +41,7 @@ export const Attachment: React.FC<{
     fill: boolean;
     onRemoveAttachment?: RemoveAttachmentType;
 }> = ({ attachment, fill, onRemoveAttachment }) => {
-    const className = classNames("overflow-hidden rounded-lg shadow", {
+    const className = classNames("overflow-hidden relative rounded-lg shadow", {
         "row-span-2": fill,
     });
 
