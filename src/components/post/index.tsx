@@ -268,7 +268,7 @@ const Post: React.FC<{
                     />
                     {isOptionsDropdownOpen && (
                         <div
-                            className="absolute right-1 -top-2 mt-2 w-40 rounded-md border border-neutral-200 bg-white shadow"
+                            className="absolute -top-2 right-1 mt-2 w-40 rounded-md border border-neutral-200 bg-white shadow"
                             ref={optionsDropdownRef}
                         >
                             <div className="py-1" role="none">
@@ -332,7 +332,7 @@ const Post: React.FC<{
                     <p>{post.reblogsCount}</p>
                     {isReblogDropdownOpen && (
                         <div
-                            className="absolute left-0 -top-2 mt-2 w-40 rounded-md border border-neutral-200 bg-white shadow"
+                            className="absolute -top-2 left-0 mt-2 w-40 rounded-md border border-neutral-200 bg-white shadow"
                             ref={reblogDropdownRef}
                         >
                             <div className="py-1" role="none">
