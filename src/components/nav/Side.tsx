@@ -215,15 +215,17 @@ const Content: React.FC<{
                         />
                     )}
                     {items}
-                    <div className="mt-4 hidden lg:block">
-                        <Button
-                            color="secondary"
-                            className="w-full"
-                            onClick={() => setCreatePost(true)}
-                        >
-                            Post
-                        </Button>
-                    </div>
+                    {sessionStatus === "authenticated" && (
+                        <div className="mt-4 hidden lg:block">
+                            <Button
+                                color="secondary"
+                                className="w-full"
+                                onClick={() => setCreatePost(true)}
+                            >
+                                Post
+                            </Button>
+                        </div>
+                    )}
                 </div>
                 {type === "desktop" && (
                     <div className="mb-4">
