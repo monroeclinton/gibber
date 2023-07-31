@@ -14,12 +14,12 @@ import Button from "../../components/button";
 import NavButton from "../../components/button/NavButton";
 import Post from "../../components/post";
 import { api } from "../../utils/api";
+import { profileUrl } from "../../utils/profile-url";
 import { getProfileId } from "../../utils/use-profile";
 import Container from "../Container";
 import Spinner from "../Spinner";
 import FollowersModal from "./FollowersModal";
 import FollowingModal from "./FollowingModal";
-import { profileUrl } from "../../utils/profile-url";
 
 interface IProfileProps {
     postFilter?: "with-replies" | "media";
