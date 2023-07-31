@@ -48,6 +48,7 @@ export const env = createEnv({
         NEXT_PUBLIC_REGISTRATION_ENABLED: z
             .enum(["true", "false"])
             .transform((value) => value === "true"),
+        NEXT_PUBLIC_WEB_DOMAIN: z.string(),
     },
 
     /*
@@ -58,12 +59,13 @@ export const env = createEnv({
      */
     runtimeEnv: {
         DATABASE_URL: process.env.DATABASE_URL,
-        WEB_DOMAIN: process.env.WEB_DOMAIN,
+        WEB_DOMAIN: process.env.NEXT_PUBLIC_WEB_DOMAIN,
         WEB_DOMAIN_SECURE: process.env.WEB_DOMAIN_SECURE,
         WEB_URL:
             (process.env.WEB_DOMAIN_SECURE === "false" ? "http" : "https") +
             "://" +
             process.env.WEB_DOMAIN,
+        NEXT_PUBLIC_WEB_DOMAIN: process.env.NEXT_PUBLIC_WEB_DOMAIN,
         NODE_ENV: process.env.NODE_ENV,
         NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
         NEXTAUTH_URL: process.env.NEXTAUTH_URL,
