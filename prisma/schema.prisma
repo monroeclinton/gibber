@@ -114,6 +114,7 @@ model Profile {
     name              String
     username          String
     domain            String
+    url               String          @unique
     summary           String?
     followingCount    Int             @default(0)
     followersCount    Int             @default(0)

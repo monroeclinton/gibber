@@ -172,6 +172,7 @@ export const upsertRemoteProfile = async (username: string, domain: string) => {
         id: `${username}@${domain}`,
         name: actor.name,
         domain: domain,
+        url: actor.id,
         username: actor.preferredUsername,
         summary: actor.summary,
         createdAt: new Date(actor.published),

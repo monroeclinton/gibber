@@ -336,6 +336,9 @@ export const profileRouter = createTRPCRouter({
                 username: input.username,
                 summary: input.summary,
                 domain: env.WEB_DOMAIN,
+                url: `${env.WEB_DOMAIN_SECURE ? "https" : "http"}://${
+                    env.WEB_DOMAIN
+                }/${input.username}`,
             };
 
             return ctx.prisma.profile.upsert({
