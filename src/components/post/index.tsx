@@ -21,6 +21,7 @@ import { useRef, useState } from "react";
 import { createPostAtom, reblogPostAtom } from "../../atoms";
 import { type Post as IPost } from "../../types/post";
 import { api } from "../../utils/api";
+import { profileUrl } from "../../utils/profile-url";
 import useOutsideClick from "../../utils/use-outside-click";
 import { getProfileId } from "../../utils/use-profile";
 import Attachments from "./Attachments";
@@ -206,7 +207,10 @@ const Post: React.FC<{
             )}
             <div className="flex items-start">
                 <Link
-                    href={`/${post.profile.username}`}
+                    href={profileUrl(
+                        post.profile.username,
+                        post.profile.domain
+                    )}
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div
@@ -234,7 +238,10 @@ const Post: React.FC<{
                     <p>
                         <Link
                             className="hover:underline"
-                            href={`/${post.profile.username}`}
+                            href={profileUrl(
+                                post.profile.username,
+                                post.profile.domain
+                            )}
                             onClick={(e) => e.stopPropagation()}
                         >
                             {post.profile.username}

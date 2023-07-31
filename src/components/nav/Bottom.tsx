@@ -13,6 +13,7 @@ import { signIn, useSession } from "next-auth/react";
 
 import Background from "../../../assets/bottom-bar.svg";
 import { createPostAtom } from "../../atoms";
+import { profileUrl } from "../../utils/profile-url";
 import { useProfile } from "../../utils/use-profile";
 import Button from "../button";
 
@@ -80,7 +81,9 @@ const AuthedBar = () => {
             icon: BellIcon,
         },
         {
-            url: "/" + (profile.data ? profile.data.username : ""),
+            url: profile.data
+                ? profileUrl(profile.data.username, profile.data.domain)
+                : "",
             text: "Profile",
             icon: UserCircleIcon,
         },

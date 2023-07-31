@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { api } from "../utils/api";
+import { profileUrl } from "../utils/profile-url";
 import { default as SearchInput } from "./input/Search";
 import SideNav from "./nav/Side";
 import Sidebar from "./Sidebar";
@@ -19,7 +20,10 @@ const Container: React.FC<IContainerProps> = ({ children }) => {
     const discover = api.profile.getDiscover.useQuery();
 
     const people = discover.data?.map((profile) => (
-        <Link href={`/${profile.username}`} key={profile.id}>
+        <Link
+            href={profileUrl(profile.username, profile.domain)}
+            key={profile.id}
+        >
             <div className="mt-4 flex">
                 <div
                     className={classNames(

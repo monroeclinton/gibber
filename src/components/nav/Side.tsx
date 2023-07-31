@@ -27,6 +27,7 @@ import {
 import Logo from "../../../assets/gibber.svg";
 import { createPostAtom, navOpenAtom } from "../../atoms";
 import { env } from "../../env.mjs";
+import { profileUrl } from "../../utils/profile-url";
 import { clearProfileId, useProfile } from "../../utils/use-profile";
 import Button from "../button";
 import CloseButton from "../button/CloseButton";
@@ -146,7 +147,9 @@ const Content: React.FC<{
             auth: true,
         },
         {
-            url: "/" + (profile.data ? profile.data.username : ""),
+            url: profile.data
+                ? profileUrl(profile.data.username, profile.data.domain)
+                : "",
             text: "Profile",
             icon: UserIcon,
             auth: true,

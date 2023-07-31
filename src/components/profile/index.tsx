@@ -19,6 +19,7 @@ import Container from "../Container";
 import Spinner from "../Spinner";
 import FollowersModal from "./FollowersModal";
 import FollowingModal from "./FollowingModal";
+import { profileUrl } from "../../utils/profile-url";
 
 interface IProfileProps {
     postFilter?: "with-replies" | "media";
@@ -282,7 +283,10 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
                         </div>
                         <div className="mt-3.5 flex h-10 space-x-3.5 overflow-auto border-b-2 border-neutral-100 md:mb-1">
                             <Link
-                                href={`/${username as string}`}
+                                href={profileUrl(
+                                    profile.data.username,
+                                    profile.data.domain
+                                )}
                                 className={className(
                                     "ml-3.5 flex h-full shrink-0 items-center rounded-t-lg px-6",
                                     {
@@ -296,7 +300,10 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
                                 <p className="font-semibold">Posts</p>
                             </Link>
                             <Link
-                                href={`/${username as string}/with-replies`}
+                                href={`${profileUrl(
+                                    profile.data.username,
+                                    profile.data.domain
+                                )}/with-replies`}
                                 className={className(
                                     "ml-3.5 flex h-full shrink-0 items-center rounded-t-lg px-6",
                                     {
@@ -310,7 +317,10 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
                                 <p className="font-semibold">Posts & replies</p>
                             </Link>
                             <Link
-                                href={`/${username as string}/media`}
+                                href={`${profileUrl(
+                                    profile.data.username,
+                                    profile.data.domain
+                                )}/media`}
                                 className={className(
                                     "ml-3.5 flex h-full shrink-0 items-center rounded-t-lg px-6",
                                     {
