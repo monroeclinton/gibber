@@ -1,4 +1,5 @@
 import { UserIcon } from "@heroicons/react/24/solid";
+import type { Query } from "@tanstack/react-query";
 import className from "classnames";
 import * as DOMPurify from "dompurify";
 import { useAtom } from "jotai";
@@ -40,6 +41,8 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
 
     const [, setProfileManager] = useAtom(profileManagerAtom);
 
+    const shouldRefetch = (query: Query) => query.state.fetchFailureCount === 0;
+
     const profile = api.profile.getByUsername.useQuery(
         {
             profileId,
@@ -47,6 +50,9 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
         },
         {
             enabled: router.isReady,
+            refetchOnMount: shouldRefetch,
+            refetchOnWindowFocus: shouldRefetch,
+            refetchOnReconnect: shouldRefetch,
             retry: (failureCount, error) => {
                 return failureCount < 3 && error.data?.httpStatus != 404;
             },
