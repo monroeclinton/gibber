@@ -118,14 +118,6 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
         }
     };
 
-    if (profile.isError && profile.error.data?.httpStatus === 404) {
-        return (
-            <>
-                <p>This profile does not exist.</p>
-            </>
-        );
-    }
-
     return (
         <>
             <Head>
@@ -151,6 +143,11 @@ const Profile: React.FC<IProfileProps> = ({ postFilter }) => {
                 {profile.isLoading && (
                     <div className="flex h-screen items-center justify-center">
                         <Spinner />
+                    </div>
+                )}
+                {profile.isError && profile.error.data?.httpStatus === 404 && (
+                    <div className="bg-neutral-50 p-4 text-neutral-800">
+                        <p>This profile does not exist.</p>
                     </div>
                 )}
                 {profile.data && (
