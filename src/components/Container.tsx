@@ -75,10 +75,14 @@ const Container: React.FC<IContainerProps> = ({ children }) => {
                 className="sticky top-[65px] ml-[40px] h-full"
                 type="desktop"
             >
-                <div className="lg:hidden xl:block">
-                    <h1 className="text-lg font-semibold">Discover People</h1>
-                    {people}
-                </div>
+                {people && (
+                    <div className="lg:hidden xl:block">
+                        <h1 className="text-lg font-semibold">
+                            Discover People
+                        </h1>
+                        {people}
+                    </div>
+                )}
             </Sidebar>
         </div>
     );
