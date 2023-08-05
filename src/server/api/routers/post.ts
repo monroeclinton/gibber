@@ -155,6 +155,17 @@ export const postRouter = createTRPCRouter({
 
             return await computeInteractions(posts, profile?.id);
         }),
+    getCountByProfileId: publicProcedure
+        .input(z.object({ profileId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            return ctx.prisma.post.count({
+                where: {
+                    profileId: input.profileId,
+                    inReplyToId: null,
+                    reblogId: null,
+                },
+            });
+        }),
     getFeed: publicProcedure.query(async ({ ctx }) => {
         const posts = await ctx.prisma.post.findMany({
             where: {
